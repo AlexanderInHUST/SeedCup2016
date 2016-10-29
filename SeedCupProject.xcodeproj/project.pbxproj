@@ -7,7 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		198524761DC4FC3000052782 /* iteratorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 198524741DC4FC3000052782 /* iteratorManager.cpp */; };
+		19BE66B91DC3975C0035ECC4 /* wordAnalyst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19BE66B71DC3975C0035ECC4 /* wordAnalyst.cpp */; };
+		19BE66BC1DC399750035ECC4 /* token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19BE66BA1DC399750035ECC4 /* token.cpp */; };
 		19CA4EFE1DBE5C5F0050E0DF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19CA4EFD1DBE5C5F0050E0DF /* main.cpp */; };
+		19D0E09C1DC43A7500BF2693 /* grammarAnalyst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D0E09A1DC43A7500BF2693 /* grammarAnalyst.cpp */; };
+		19D120A71DC1D261003EEF6A /* calculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D120A51DC1D261003EEF6A /* calculator.cpp */; };
+		19D120AA1DC1D7A0003EEF6A /* memoryStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D120A81DC1D7A0003EEF6A /* memoryStack.cpp */; };
+		19D120AD1DC1E6E3003EEF6A /* fileHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D120AB1DC1E6E3003EEF6A /* fileHandler.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +30,22 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		198524741DC4FC3000052782 /* iteratorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = iteratorManager.cpp; sourceTree = "<group>"; };
+		198524751DC4FC3000052782 /* iteratorManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = iteratorManager.hpp; sourceTree = "<group>"; };
+		19BE66B71DC3975C0035ECC4 /* wordAnalyst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wordAnalyst.cpp; sourceTree = "<group>"; };
+		19BE66B81DC3975C0035ECC4 /* wordAnalyst.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = wordAnalyst.hpp; sourceTree = "<group>"; };
+		19BE66BA1DC399750035ECC4 /* token.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = token.cpp; sourceTree = "<group>"; };
+		19BE66BB1DC399750035ECC4 /* token.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = token.hpp; sourceTree = "<group>"; };
 		19CA4EFA1DBE5C5F0050E0DF /* SeedCupProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SeedCupProject; sourceTree = BUILT_PRODUCTS_DIR; };
 		19CA4EFD1DBE5C5F0050E0DF /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		19D0E09A1DC43A7500BF2693 /* grammarAnalyst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = grammarAnalyst.cpp; sourceTree = "<group>"; };
+		19D0E09B1DC43A7500BF2693 /* grammarAnalyst.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = grammarAnalyst.hpp; sourceTree = "<group>"; };
+		19D120A51DC1D261003EEF6A /* calculator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = calculator.cpp; sourceTree = "<group>"; };
+		19D120A61DC1D261003EEF6A /* calculator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = calculator.hpp; sourceTree = "<group>"; };
+		19D120A81DC1D7A0003EEF6A /* memoryStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memoryStack.cpp; sourceTree = "<group>"; };
+		19D120A91DC1D7A0003EEF6A /* memoryStack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = memoryStack.hpp; sourceTree = "<group>"; };
+		19D120AB1DC1E6E3003EEF6A /* fileHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fileHandler.cpp; sourceTree = "<group>"; };
+		19D120AC1DC1E6E3003EEF6A /* fileHandler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = fileHandler.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +79,20 @@
 			isa = PBXGroup;
 			children = (
 				19CA4EFD1DBE5C5F0050E0DF /* main.cpp */,
+				19D120A61DC1D261003EEF6A /* calculator.hpp */,
+				19D120A51DC1D261003EEF6A /* calculator.cpp */,
+				198524741DC4FC3000052782 /* iteratorManager.cpp */,
+				198524751DC4FC3000052782 /* iteratorManager.hpp */,
+				19D120A91DC1D7A0003EEF6A /* memoryStack.hpp */,
+				19D120A81DC1D7A0003EEF6A /* memoryStack.cpp */,
+				19D120AC1DC1E6E3003EEF6A /* fileHandler.hpp */,
+				19D120AB1DC1E6E3003EEF6A /* fileHandler.cpp */,
+				19BE66B71DC3975C0035ECC4 /* wordAnalyst.cpp */,
+				19BE66B81DC3975C0035ECC4 /* wordAnalyst.hpp */,
+				19BE66BA1DC399750035ECC4 /* token.cpp */,
+				19BE66BB1DC399750035ECC4 /* token.hpp */,
+				19D0E09A1DC43A7500BF2693 /* grammarAnalyst.cpp */,
+				19D0E09B1DC43A7500BF2693 /* grammarAnalyst.hpp */,
 			);
 			path = SeedCupProject;
 			sourceTree = "<group>";
@@ -119,6 +154,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				19CA4EFE1DBE5C5F0050E0DF /* main.cpp in Sources */,
+				198524761DC4FC3000052782 /* iteratorManager.cpp in Sources */,
+				19BE66B91DC3975C0035ECC4 /* wordAnalyst.cpp in Sources */,
+				19D120AA1DC1D7A0003EEF6A /* memoryStack.cpp in Sources */,
+				19D120AD1DC1E6E3003EEF6A /* fileHandler.cpp in Sources */,
+				19D0E09C1DC43A7500BF2693 /* grammarAnalyst.cpp in Sources */,
+				19D120A71DC1D261003EEF6A /* calculator.cpp in Sources */,
+				19BE66BC1DC399750035ECC4 /* token.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,6 +279,7 @@
 				19CA4F031DBE5C5F0050E0DF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
