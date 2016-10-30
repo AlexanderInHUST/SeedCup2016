@@ -32,18 +32,20 @@ public:
     void analyse(vector<Token> * tokens);
     GrammarAnalyst(vector<Token> * tokens);
 private:
-    void handleInt();
-    void handleIf();
-    //void handleFor();
-    //void handleDo();
-    void handleWhile();
-    void handleAnnotation();
-    void handlePrintf();
-    int handleExpression();
+    int handleAssignment(IteratorManager * manager);
+    void handleInt(IteratorManager * manager);
+    void handleIf(IteratorManager * manager);
+    //void handleFor(IteratorManager * manager);
+    //void handleDo(IteratorManager * manager);
+    void handleWhile(IteratorManager * manager);
+    void handleAnnotation(IteratorManager * manager);
+    void handlePrintf(IteratorManager * manager);
+    int handleExpression(IteratorManager * manager);
+    
+    void handleCurrentIt(IteratorManager * manager);
     vector<Token>::iterator it;
     Calculator calculator;
     MemoryStack memoryStack;
-    IteratorManager manager;
     stack<vector<string>> newVariable;
 };
 #endif /* grammarAnalyst_hpp */
