@@ -344,7 +344,7 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfWhile(IteratorManager * manag
 
 // At next token
 void GrammarAnalyst::handlePrintf(IteratorManager * manager){
-    manager->move(4);
+    manager->move(5);
     while(manager->getIt()->content == ","){
         manager->move(1);
         handleExpression(manager);
