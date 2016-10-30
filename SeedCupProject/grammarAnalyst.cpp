@@ -126,7 +126,6 @@ void GrammarAnalyst::handleInt(IteratorManager * manager){
     manager->move(1);
 }
 
-// Fix me in case of "else if"
 // At next token
 void GrammarAnalyst::handleIf(IteratorManager * manager){
     vector<Token> subTokens;
@@ -237,6 +236,7 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfIf(IteratorManager * manager)
         manager->jump(1);
     }
     while(manager->getIt()->content.compare("else") == 0){
+        stack = 0;
         manager->jump(1);
         if(manager->getIt()->content.compare("if") == 0){
             while(manager->getIt()->content.compare(")") != 0)
@@ -282,11 +282,13 @@ void GrammarAnalyst::handleDo(){
 void GrammarAnalyst::handleWhile(IteratorManager * manager){
     vector<Token>  subTokens;
     int stack = 0;
+    bool expression;
     bool flagOfBorder = false;
     bool flagOfRead = false;
-    vector<Token>::iterator oldIt;
+    vector<Token>::iterator startOfIt;
     manager->move(2);
     while(handleExpression(manager) == 1){
+        manager->move(1);
         if(manager->getIt()->content == "{"){
             flagOfBorder = true;
             manager->move(1);
@@ -308,15 +310,41 @@ void GrammarAnalyst::handleWhile(IteratorManager * manager){
             }
         }
         manager->move(1);
-        oldIt = manager->getIt();
+        startOfIt = manager->getIt();
         analyse(&subTokens);
-        manager->jumpTo(oldIt);
+        manager->jumpTo(startOfIt);
     }
 }
 
+vector<Token>::iterator GrammarAnalyst::getTheEndOfWhile(IteratorManager * manager){
+    int stack = 0;
+    while(manager->getIt()->content.compare(")") != 0)
+        manager->jump(1);
+    manager->jump(1);
+    if(manager->getIt()->content.compare("{") == 0){
+        while(!(manager->getIt()->content == "}" && stack == 1)){
+            if(manager->getIt()->content == "{")
+                stack++;
+            else if(manager->getIt()->content == "}")
+                stack--;
+            manager->jump(1);
+        }
+        manager->jump(1);
+        
+    }
+    else{
+        while((manager->getIt() + 1)->line == manager->getIt()->line){
+            manager->jump(1);
+        }
+        manager->jump(1);
+    }
+    return manager->getIt();
+}
+
+
 // At next token
 void GrammarAnalyst::handlePrintf(IteratorManager * manager){
-    manager->move(5);
+    manager->move(4);
     while(manager->getIt()->content == ","){
         manager->move(1);
         handleExpression(manager);

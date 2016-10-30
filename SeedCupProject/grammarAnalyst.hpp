@@ -44,6 +44,8 @@ private:
     
     void handleCurrentIt(IteratorManager * manager);
     vector<Token>::iterator getTheEndOfIf(IteratorManager * manager);
+    vector<Token>::iterator getTheEndOfWhile(IteratorManager * manager);
+    //vector<Token>::iterator getTheEndOfDo(IteratorManager * manager);
     vector<Token>::iterator it;
     Calculator calculator;
     MemoryStack memoryStack;
