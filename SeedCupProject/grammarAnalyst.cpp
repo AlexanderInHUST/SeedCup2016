@@ -48,8 +48,8 @@ void GrammarAnalyst::analyse(vector<Token> * tokens){
                 handlePrintf();
             }
                 
-        }else{
-            manager.move(1);
+        }else if(manager.getIt()->describe.compare("note") == 0){
+            manager.jump(1);
         }
     }
 }
@@ -211,10 +211,7 @@ void GrammarAnalyst::handleWhile(){
 
 // At next token
 void GrammarAnalyst::handlePrintf(){
-    manager.move(2);
-    while(manager.getIt()->describe == "identf"){
-        manager.move(1);
-    }
+    manager.move(5);
     while(manager.getIt()->content == ","){
         manager.move(1);
         handleExpression();
