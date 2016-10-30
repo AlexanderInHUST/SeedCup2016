@@ -36,7 +36,7 @@ int Calculator::doCalculator(vector<Token> tokens){
             
         }
         else{
-            if(tokens[i].describe.compare("Variable") == 0){
+            if(tokens[i].describe.compare("identf") == 0){
                 result.push(Num(tokens[i].content, memoryStack->getVariable(tokens[i].content)));
             }else if(tokens[i].content.compare("__FLAG__") == 0){
                 result.push(Num());
