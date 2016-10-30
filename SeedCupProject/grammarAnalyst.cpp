@@ -131,68 +131,136 @@ void GrammarAnalyst::handleInt(IteratorManager * manager){
 void GrammarAnalyst::handleIf(IteratorManager * manager){
     vector<Token> subTokens;
     int stack = 0;
-    bool flagOfBorder = false;
+    bool flagOfIfBorder = false;
     bool expression;
+    vector<Token>::iterator startOfIf = manager->getIt();
+    vector<Token>::iterator endOfIt;
+    
+    // To get the end iterator of if block
+    endOfIt = getTheEndOfIf(manager);
+    manager->jumpTo(startOfIf);
+    
     manager->move(2);
     expression = (handleExpression(manager) == 0) ? false : true;
     manager->move(1);
     if(manager->getIt()->content == "{"){
-        flagOfBorder = true;
+        flagOfIfBorder = true;
         manager->move(1);
     }
-    if(!flagOfBorder){
+    if(!flagOfIfBorder){
         if(expression){
             handleCurrentIt(manager);
         }
-    }
-    /*if(!expression){
-        while(manager->getIt()->content != "else")
-            manager->jump(1);
-        manager->jump(1);
-    }
-    if(!flagOfBorder){
-        while((manager->getIt() + 1)->line == manager->getIt()->line){
-            subTokens.insert(subTokens.end(), *manager->getIt());
-            manager->jump(1);
-        }
-    }
-    else{
-        while(!(manager->getIt()->content == "}" && stack == 0)){
-            if(manager->getIt()->content == "{")
-                stack++;
-            else if(manager->getIt()->content == "}")
-                stack--;
-            subTokens.insert(subTokens.end(), *manager->getIt());
-            manager->jump(1);
-        }
-    }
-    subTokens.insert(subTokens.end(), *manager->getIt());
-    manager->jump(1);
-    analyse(&subTokens);
-    manager->move(1);
-    if(expression){
-        if(manager->getIt()->content.compare("else")){
-            if(manager->getIt()->content == "{"){
-                flagOfBorder = true;
+        else{
+            while((manager->getIt() + 1)->line == manager->getIt()->line){
                 manager->jump(1);
             }
-            if(!flagOfBorder){
-                while((manager->getIt() + 1)->line == manager->getIt()->line)
+            manager->jump(1);
+            if(manager->getIt()->content.compare("else") == 0){
+                manager->jump(1);
+                if(manager->getIt()->content.compare("{") != 0){
+                    handleCurrentIt(manager);
+                }
+                else{
                     manager->jump(1);
+                    while(!(manager->getIt()->content == "}" && stack == 0)){
+                        if(manager->getIt()->content == "{")
+                            stack++;
+                        else if(manager->getIt()->content == "}")
+                            stack--;
+                        subTokens.insert(subTokens.end(), *manager->getIt());
+                        manager->jump(1);
+                    }
+                    manager->jump(1);
+                    analyse(&subTokens);
+                }
+            }
+        }
+    }else{
+        if(!expression){
+            while(manager->getIt()->content.compare("else") != 0){
+                manager->jump(1);
+            }
+            manager->jump(1);
+            if(manager->getIt()->content.compare("{") != 0){
+                handleCurrentIt(manager);
             }
             else{
+                manager->jump(1);
                 while(!(manager->getIt()->content == "}" && stack == 0)){
                     if(manager->getIt()->content == "{")
                         stack++;
                     else if(manager->getIt()->content == "}")
                         stack--;
+                    subTokens.insert(subTokens.end(), *manager->getIt());
                     manager->jump(1);
                 }
+                manager->jump(1);
+                analyse(&subTokens);
+            }
+        }
+        else{
+            while(!(manager->getIt()->content == "}" && stack == 0)){
+                if(manager->getIt()->content == "{")
+                    stack++;
+                else if(manager->getIt()->content == "}")
+                    stack--;
+                subTokens.insert(subTokens.end(), *manager->getIt());
+                manager->jump(1);
+            }
+            manager->jump(1);
+            analyse(&subTokens);
+        }
+    }
+    manager->jumpTo(endOfIt);
+}
+
+vector<Token>::iterator GrammarAnalyst::getTheEndOfIf(IteratorManager * manager){
+    int stack = 0;
+    while(manager->getIt()->content.compare(")") != 0)
+        manager->jump(1);
+    manager->jump(1);
+    if(manager->getIt()->content.compare("{") == 0){
+        while(!(manager->getIt()->content == "}" && stack == 1)){
+            if(manager->getIt()->content == "{")
+                stack++;
+            else if(manager->getIt()->content == "}")
+                stack--;
+            manager->jump(1);
+        }
+        manager->jump(1);
+    }
+    else{
+        while((manager->getIt() + 1)->line == manager->getIt()->line){
+            manager->jump(1);
+        }
+        manager->jump(1);
+    }
+    while(manager->getIt()->content.compare("else") == 0){
+        manager->jump(1);
+        if(manager->getIt()->content.compare("if") == 0){
+            while(manager->getIt()->content.compare(")") != 0)
+                manager->jump(1);
+            manager->jump(1);
+        }
+        if(manager->getIt()->content.compare("{") == 0){
+            while(!(manager->getIt()->content == "}" && stack == 1)){
+                if(manager->getIt()->content == "{")
+                    stack++;
+                else if(manager->getIt()->content == "}")
+                    stack--;
+                manager->jump(1);
+            }
+            manager->jump(1);
+        }
+        else{
+            while((manager->getIt() + 1)->line == manager->getIt()->line){
+                manager->jump(1);
             }
             manager->jump(1);
         }
     }
-    return;*/
+    return manager->getIt();
 }
 
 // At next token
