@@ -17,6 +17,7 @@ void GrammarAnalyst::analyse(vector<Token> * tokens){
     for(manager.jumpTo(tokens->begin()); manager.getIt() != tokens->end(); ){
         handleCurrentIt(&manager);
     }
+    cleanNewVariable();
 }
 
 void GrammarAnalyst::handleCurrentIt(IteratorManager * manager){
@@ -177,25 +178,36 @@ void GrammarAnalyst::handleIf(IteratorManager * manager){
         }
     }else{
         if(!expression){
-            while(manager->getIt()->content.compare("else") != 0){
+            while(!(manager->getIt()->content == "}" && stack == 0)){
+                if(manager->getIt()->content == "{")
+                    stack++;
+                else if(manager->getIt()->content == "}")
+                    stack--;
+                subTokens.insert(subTokens.end(), *manager->getIt());
                 manager->jump(1);
             }
+            stack = 0;
             manager->jump(1);
-            if(manager->getIt()->content.compare("{") != 0){
-                handleCurrentIt(manager);
-            }
-            else{
+            
+            if(manager->getIt()->content.compare("else") == 0){
                 manager->jump(1);
-                while(!(manager->getIt()->content == "}" && stack == 0)){
-                    if(manager->getIt()->content == "{")
-                        stack++;
-                    else if(manager->getIt()->content == "}")
-                        stack--;
-                    subTokens.insert(subTokens.end(), *manager->getIt());
-                    manager->jump(1);
+                if(manager->getIt()->content.compare("{") != 0){
+                    handleCurrentIt(manager);
                 }
-                manager->jump(1);
-                analyse(&subTokens);
+                else{
+                    manager->jump(1);
+                    while(!(manager->getIt()->content == "}" && stack == 0)){
+                        if(manager->getIt()->content == "{")
+                            stack++;
+                        else if(manager->getIt()->content == "}")
+                            stack--;
+                        subTokens.insert(subTokens.end(), *manager->getIt());
+                        manager->jump(1);
+                    }
+                    stack = 0;
+                    manager->jump(1);
+                    analyse(&subTokens);
+                }
             }
         }
         else{
@@ -207,6 +219,7 @@ void GrammarAnalyst::handleIf(IteratorManager * manager){
                 subTokens.insert(subTokens.end(), *manager->getIt());
                 manager->jump(1);
             }
+            stack = 0;
             manager->jump(1);
             analyse(&subTokens);
         }
@@ -227,6 +240,7 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfIf(IteratorManager * manager)
                 stack--;
             manager->jump(1);
         }
+        stack = 0;
         manager->jump(1);
     }
     else{
@@ -236,7 +250,6 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfIf(IteratorManager * manager)
         manager->jump(1);
     }
     while(manager->getIt()->content.compare("else") == 0){
-        stack = 0;
         manager->jump(1);
         if(manager->getIt()->content.compare("if") == 0){
             while(manager->getIt()->content.compare(")") != 0)
@@ -251,6 +264,7 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfIf(IteratorManager * manager)
                     stack--;
                 manager->jump(1);
             }
+            stack = 0;
             manager->jump(1);
         }
         else{
@@ -365,4 +379,11 @@ int GrammarAnalyst::handleExpression(IteratorManager * manager){
     memoryStack.handleSideEffect(calculator.side_effect);
     calculator.cleanEffect();
     return value;
+}
+
+void GrammarAnalyst::cleanNewVariable(){
+    for(int i = 0 ; i < newVariable.top().size(); i++){
+        memoryStack.popVariable(newVariable.top()[i]);
+    }
+    newVariable.pop();
 }

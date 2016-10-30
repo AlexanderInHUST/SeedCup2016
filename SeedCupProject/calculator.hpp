@@ -13,6 +13,7 @@
 #include "memoryStack.hpp"
 
 #include <stdio.h>
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <stack>

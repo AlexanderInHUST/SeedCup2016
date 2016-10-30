@@ -42,9 +42,8 @@ int MemoryStack::getVariable(string name){
     map<string, stack<int>>::iterator it = memory.find(name);
     if(it != memory.end()){
         return it->second.top();
-    }else{
-        return (INT_MIN);
     }
+    return 0;
 }
 
 void MemoryStack::handleSideEffect(map<string, int> sideEffect){
