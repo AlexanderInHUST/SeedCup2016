@@ -296,38 +296,43 @@ void GrammarAnalyst::handleDo(){
 void GrammarAnalyst::handleWhile(IteratorManager * manager){
     vector<Token>  subTokens;
     int stack = 0;
-    bool expression;
     bool flagOfBorder = false;
     bool flagOfRead = false;
-    vector<Token>::iterator startOfIt;
+    
+    vector<Token>::iterator startOfWhile = manager->getIt();
+    vector<Token>::iterator endOfWhile;
+    endOfWhile = getTheEndOfWhile(manager);
+    manager->jumpTo(startOfWhile);
+    
     manager->move(2);
     while(handleExpression(manager) == 1){
-        manager->move(1);
+        manager->jump(1);
         if(manager->getIt()->content == "{"){
             flagOfBorder = true;
-            manager->move(1);
+            manager->jump(1);
         }
-        if(!flagOfBorder && !flagOfRead){
-            while((manager->getIt() + 1)->line == manager->getIt()->line){
-                subTokens.insert(subTokens.end(), *manager->getIt());
-                manager->jump(1);
+        if(!flagOfBorder){
+            handleCurrentIt(manager);
+        }
+        else {
+            if(!flagOfRead){
+                while(!(manager->getIt()->content == "}" && stack == 0)){
+                    if(manager->getIt()->content == "{")
+                        stack++;
+                    else if(manager->getIt()->content == "}")
+                        stack--;
+                    subTokens.insert(subTokens.end(), *manager->getIt());
+                    manager->jump(1);
+                }
+                flagOfRead = true;
             }
+            analyse(&subTokens);
+            cout << (startOfWhile + 2)->line << " ";
         }
-        else if(!flagOfRead){
-            while(!(manager->getIt()->content == "}" && stack == 0)){
-                if(manager->getIt()->content == "{")
-                    stack++;
-                else if(manager->getIt()->content == "}")
-                    stack--;
-                subTokens.insert(subTokens.end(), *manager->getIt());
-                manager->move(1);
-            }
-        }
-        manager->move(1);
-        startOfIt = manager->getIt();
-        analyse(&subTokens);
-        manager->jumpTo(startOfIt);
+        manager->jumpTo(startOfWhile + 2);
+        
     }
+    manager->jumpTo(endOfWhile);
 }
 
 vector<Token>::iterator GrammarAnalyst::getTheEndOfWhile(IteratorManager * manager){
@@ -363,7 +368,7 @@ void GrammarAnalyst::handlePrintf(IteratorManager * manager){
         manager->move(1);
         handleExpression(manager);
     }
-    manager->move(2);
+    manager->jump(2);
 }
 
 // At next token

@@ -23,15 +23,15 @@ vector<Token>::iterator IteratorManager::getIt(){
 
 void IteratorManager::move(int step){
     for (int i = 0; i < step; i++){
-        printLine();
         it++;
+        printLine();
     }
 }
 
 void IteratorManager::moveTo(vector<Token>::iterator aim){
     while (it != transferIn(aim)){
-        printLine();
         it++;
+        printLine();
     }
 }
 
