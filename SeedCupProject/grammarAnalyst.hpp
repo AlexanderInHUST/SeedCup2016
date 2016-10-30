@@ -29,8 +29,8 @@ using namespace std;
 
 class GrammarAnalyst{
 public:
-    void analyse(vector<Token> tokens);
-    GrammarAnalyst(vector<Token> tokens);
+    void analyse(vector<Token> * tokens);
+    GrammarAnalyst(vector<Token> * tokens);
 private:
     void handleInt();
     void handleIf();

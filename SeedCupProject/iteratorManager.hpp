@@ -32,6 +32,8 @@ private:
     vector<Token>::iterator it;
     vector<Token> tokens;
     vector<Token> *origin;
+    vector<Token>::iterator tokensBegin;
+    vector<Token>::iterator originBegin;
     int lastLine;
     void printLine();
     vector<Token>::iterator transferIn(vector<Token>::iterator aim);

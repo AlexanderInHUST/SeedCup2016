@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		198524761DC4FC3000052782 /* iteratorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 198524741DC4FC3000052782 /* iteratorManager.cpp */; };
 		19BE66B91DC3975C0035ECC4 /* wordAnalyst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19BE66B71DC3975C0035ECC4 /* wordAnalyst.cpp */; };
-		19BE66BC1DC399750035ECC4 /* token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19BE66BA1DC399750035ECC4 /* token.cpp */; };
 		19CA4EFE1DBE5C5F0050E0DF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19CA4EFD1DBE5C5F0050E0DF /* main.cpp */; };
 		19D0E09C1DC43A7500BF2693 /* grammarAnalyst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D0E09A1DC43A7500BF2693 /* grammarAnalyst.cpp */; };
 		19D120A71DC1D261003EEF6A /* calculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D120A51DC1D261003EEF6A /* calculator.cpp */; };
@@ -34,7 +33,6 @@
 		198524751DC4FC3000052782 /* iteratorManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = iteratorManager.hpp; sourceTree = "<group>"; };
 		19BE66B71DC3975C0035ECC4 /* wordAnalyst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wordAnalyst.cpp; sourceTree = "<group>"; };
 		19BE66B81DC3975C0035ECC4 /* wordAnalyst.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = wordAnalyst.hpp; sourceTree = "<group>"; };
-		19BE66BA1DC399750035ECC4 /* token.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = token.cpp; sourceTree = "<group>"; };
 		19BE66BB1DC399750035ECC4 /* token.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = token.hpp; sourceTree = "<group>"; };
 		19CA4EFA1DBE5C5F0050E0DF /* SeedCupProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SeedCupProject; sourceTree = BUILT_PRODUCTS_DIR; };
 		19CA4EFD1DBE5C5F0050E0DF /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -89,7 +87,6 @@
 				19D120AB1DC1E6E3003EEF6A /* fileHandler.cpp */,
 				19BE66B71DC3975C0035ECC4 /* wordAnalyst.cpp */,
 				19BE66B81DC3975C0035ECC4 /* wordAnalyst.hpp */,
-				19BE66BA1DC399750035ECC4 /* token.cpp */,
 				19BE66BB1DC399750035ECC4 /* token.hpp */,
 				19D0E09A1DC43A7500BF2693 /* grammarAnalyst.cpp */,
 				19D0E09B1DC43A7500BF2693 /* grammarAnalyst.hpp */,
@@ -160,7 +157,6 @@
 				19D120AD1DC1E6E3003EEF6A /* fileHandler.cpp in Sources */,
 				19D0E09C1DC43A7500BF2693 /* grammarAnalyst.cpp in Sources */,
 				19D120A71DC1D261003EEF6A /* calculator.cpp in Sources */,
-				19BE66BC1DC399750035ECC4 /* token.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

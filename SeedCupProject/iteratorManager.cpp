@@ -12,6 +12,8 @@ IteratorManager::IteratorManager(vector<Token> *tokens){
     this->tokens = *tokens;
     this->origin = tokens;
     it = this->tokens.begin();
+    tokensBegin = this->it;
+    originBegin = this->origin->begin();
     lastLine = -1;
 }
 
@@ -43,17 +45,17 @@ void IteratorManager::jumpTo(vector<Token>::iterator aim){
 
 void IteratorManager::printLine(){
     if (lastLine != it->line){
-        printf("%d ", it->line);
+        cout << it->line << " ";
     }
     lastLine = it->line;
 }
 
 vector<Token>::iterator IteratorManager::transferIn(vector<Token>::iterator aim){
-    long length = aim - origin->begin();
+    long length = aim - originBegin;
     return tokens.begin() + length;
 }
 
 vector<Token>::iterator IteratorManager::transferOut(vector<Token>::iterator aim){
-    long length = aim - tokens.begin();
+    long length = aim - tokensBegin;
     return origin->begin() + length;
 }

@@ -8,36 +8,34 @@
 
 #include "grammarAnalyst.hpp"
 
-GrammarAnalyst::GrammarAnalyst(vector<Token> tokens):manager(&tokens),calculator(&memoryStack){
-    //Do nothing...
+GrammarAnalyst::GrammarAnalyst(vector<Token> * tokens):manager(tokens),calculator(&memoryStack){
+    manager = IteratorManager(tokens);
+    calculator = Calculator(&memoryStack);
 }
 
-void GrammarAnalyst::analyse(vector<Token> tokens){
-    for(it = tokens.begin(); it != tokens.end(); it++){
-        if(it->type.compare("Border") == 0){
-            if(it->self.compare("//") == 0 || it->self.compare("/*") == 0)
+void GrammarAnalyst::analyse(vector<Token> * tokens){
+    for(manager.jumpTo(tokens->begin()); manager.getIt() != tokens->end(); ){
+        if(manager.getIt()->describe.compare("boundary") == 0){
+            if(manager.getIt()->content.compare("//") == 0 || manager.getIt()->content.compare("/*") == 0)
                 handleAnnotation();
         }
-        else if(it->type.compare("ReservedWord")){
-            if(it->self.compare("while") == 0){
+        else if(manager.getIt()->describe.compare("keyword") == 0){
+            if(manager.getIt()->content.compare("while") == 0){
                 handleWhile();
             }
-            else if(it->self.compare("if") == 0){
+            else if(manager.getIt()->content.compare("if") == 0){
                 handleIf();
             }
-            else if(it->self.compare("for") == 0){
+            else if(manager.getIt()->content.compare("for") == 0){
                 //handleFor();
             }
-            else if(it->self.compare("printf") == 0){
-                handlePrintf();
-            }
-            else if(it->self.compare("int") == 0){
+            else if(manager.getIt()->content.compare("int") == 0){
                 handleInt();
             }
-            else if(it->self.compare("do") == 0){
+            else if(manager.getIt()->content.compare("do") == 0){
                 //handleDo();
             }
-            else if(it->self.compare("break") == 0){
+            else if(manager.getIt()->content.compare("break") == 0){
                 for(int i = 0; i < newVariable.top().size(); i++){
                     memoryStack.popVariable(newVariable.top()[i]);
                 }
@@ -45,47 +43,58 @@ void GrammarAnalyst::analyse(vector<Token> tokens){
                 return;
             }
         }
+        else if(manager.getIt()->describe.compare("identf") == 0){
+            if(manager.getIt()->content.compare("printf") == 0){
+                handlePrintf();
+            }
+                
+        }else{
+            manager.move(1);
+        }
     }
 }
 
 // At next token
 void GrammarAnalyst::handleAnnotation(){
-    if(it->self.compare("//")){
-        while((it + 1)->line == it->line){
-            it++;
+    if(manager.getIt()->content.compare("//")){
+        while((manager.getIt() + 1)->line == manager.getIt()->line){
+            manager.jump(1);
         }
     }
     else{
-        while(it->self != "*/"){
-            it++;
+        while(manager.getIt()->content != "*/"){
+            manager.jump(1);
         }
     }
-    it++;
+    manager.move(1);
 }
 
 // At next token
 void GrammarAnalyst::handleInt(){
     vector<string> variableInState;
-    it++;
-    while(it->type.compare("Variable") == 0){
-        variableInState.insert(variableInState.end(), it->self);
-        if((it + 1)->self == ";"){
-            it++;
+    manager.move(1);
+    while(manager.getIt()->describe.compare("identf") == 0){
+        variableInState.insert(variableInState.end(), manager.getIt()->content);
+        if((manager.getIt() + 1)->content == ";"){
+            memoryStack.pushVariable(manager.getIt()->content, 0);
+            manager.move(1);
             break;
         }
-        else if((it + 1)->self == "="){
-            string name = it->self;
-            it = it + 2;
+        else if((manager.getIt() + 1)->content == "="){
+            string name = manager.getIt()->content;
+            manager.move(2);
             memoryStack.pushVariable(name, handleExpression());
         }
-        else if((it + 1)->self == ","){
-            it++;
-            memoryStack.pushVariable(it->self, 0);
+        else if((manager.getIt() + 1)->content == ","){
+            memoryStack.pushVariable(manager.getIt()->content, 0);
+            manager.move(2);
         }
     }
     newVariable.push(variableInState);
+    manager.move(1);
 }
 
+// Fix me in case of "else if"
 // At next token
 void GrammarAnalyst::handleIf(){
     vector<Token> subTokens;
@@ -93,56 +102,57 @@ void GrammarAnalyst::handleIf(){
     bool flagOfBorder = false;
     bool expression = true;
     vector<Token>::iterator oldIt;
-    it = it + 2;
+    manager.move(2);
     if(handleExpression() == 0){
         expression = false;
-        while(it->self != "else")
-            it++;
-        it++;
+        while(manager.getIt()->content != "else")
+            manager.jump(1);
+        manager.jump(1);
     }
-    if(it->self == "{"){
+    if(manager.getIt()->content == "{"){
         flagOfBorder = true;
-        it++;
+        manager.move(1);
     }
     if(!flagOfBorder){
-        while((it + 1)->line == it->line){
-            subTokens.insert(subTokens.end(), *it);
-            it++;
+        while((manager.getIt() + 1)->line == manager.getIt()->line){
+            subTokens.insert(subTokens.end(), *manager.getIt());
+            manager.jump(1);
         }
     }
     else{
-        while(!(it->self == "}" && stack == 0)){
-            if(it->self == "{")
+        while(!(manager.getIt()->content == "}" && stack == 0)){
+            if(manager.getIt()->content == "{")
                 stack++;
-            else if(it->self == "}")
+            else if(manager.getIt()->content == "}")
                 stack--;
-            subTokens.insert(subTokens.end(), *it);
-            it++;
+            subTokens.insert(subTokens.end(), *manager.getIt());
+            manager.jump(1);
         }
     }
-    oldIt = ++it;
-    analyse(subTokens);
-    it = oldIt;
+    manager.move(1);
+    oldIt = manager.getIt();
+    analyse(&subTokens);
+    manager.jumpTo(oldIt);
     if(expression){
-        if(it->self.compare("else")){
-            if(it->self == "{"){
+        if(manager.getIt()->content.compare("else")){
+            if(manager.getIt()->content == "{"){
                 flagOfBorder = true;
-                it++;
+                manager.jump(1);
             }
             if(!flagOfBorder){
-                while((it + 1)->line == it->line)
-                    it++;
+                while((manager.getIt() + 1)->line == manager.getIt()->line)
+                    manager.jump(1);
             }
             else{
-                while(!(it->self == "}" && stack == 0)){
-                    if(it->self == "{")
+                while(!(manager.getIt()->content == "}" && stack == 0)){
+                    if(manager.getIt()->content == "{")
                         stack++;
-                    else if(it->self == "}")
+                    else if(manager.getIt()->content == "}")
                         stack--;
-                    it++;
+                    manager.jump(1);
                 }
             }
-            it++;
+            manager.jump(1);
         }
     }
     return;
@@ -170,48 +180,46 @@ void GrammarAnalyst::handleWhile(){
     bool flagOfBorder = false;
     bool flagOfRead = false;
     vector<Token>::iterator oldIt;
-    it = it + 2;
+    manager.move(2);
     while(handleExpression() == 1){
-        if(it->self == "{"){
+        if(manager.getIt()->content == "{"){
             flagOfBorder = true;
-            it++;
+            manager.move(1);
         }
         if(!flagOfBorder && !flagOfRead){
-            while((it + 1)->line == it->line){
-                subTokens.insert(subTokens.end(), *it);
-                it++;
+            while((manager.getIt() + 1)->line == manager.getIt()->line){
+                subTokens.insert(subTokens.end(), *manager.getIt());
+                manager.jump(1);
             }
         }
         else if(!flagOfRead){
-            while(!(it->self == "}" && stack == 0)){
-                if(it->self == "{")
+            while(!(manager.getIt()->content == "}" && stack == 0)){
+                if(manager.getIt()->content == "{")
                     stack++;
-                else if(it->self == "}")
+                else if(manager.getIt()->content == "}")
                     stack--;
-                subTokens.insert(subTokens.end(), *it);
-                it++;
+                subTokens.insert(subTokens.end(), *manager.getIt());
+                manager.move(1);
             }
         }
-        oldIt = ++it;
-        analyse(subTokens);
-        it = oldIt;
+        manager.move(1);
+        oldIt = manager.getIt();
+        analyse(&subTokens);
+        manager.jumpTo(oldIt);
     }
 }
 
 // At next token
 void GrammarAnalyst::handlePrintf(){
-    while(it->self != "\""){
-        it++;
+    manager.move(2);
+    while(manager.getIt()->describe == "identf"){
+        manager.move(1);
     }
-    it++;
-    while(!(it->self == "\"" && (it-1)->self != "\\")){
-        it++;
-    }
-    it++;
-    while(it->self == ","){
+    while(manager.getIt()->content == ","){
+        manager.move(1);
         handleExpression();
     }
-    it = it + 2;
+    manager.move(2);
 }
 
 // At next token
@@ -219,11 +227,10 @@ void GrammarAnalyst::handlePrintf(){
 int GrammarAnalyst::handleExpression(){
     vector<Token> expression;
     int value;
-    while(it->type != "Border"){
-        expression.insert(expression.end(), *it);
-        it++;
+    while(manager.getIt()->describe != "boundary"){
+        expression.insert(expression.end(), *manager.getIt());
+        manager.move(1);
     }
-    it++;
     value =  calculator.doCalculator(expression);
     memoryStack.handleSideEffect(calculator.side_effect);
     calculator.cleanEffect();

@@ -23,25 +23,25 @@ int Calculator::doCalculator(vector<Token> tokens){
     stack<Num> result;
     prehandlerTokens(tokens);
     for(int i = 0; i < tokens.size(); i++){
-        if(find(allSymbols.begin(), allSymbols.end(), tokens[i].self) != allSymbols.end()){
-            if(symbols.empty() || priority.at(tokens.at(i).self) > priority.at(symbols.top())){
-                symbols.push(tokens.at(i).self);
+        if(find(allSymbols.begin(), allSymbols.end(), tokens[i].content) != allSymbols.end()){
+            if(symbols.empty() || priority.at(tokens.at(i).content) > priority.at(symbols.top())){
+                symbols.push(tokens.at(i).content);
             }else{
-                while(!symbols.empty() && priority.at(tokens.at(i).self) <= priority.at(symbols.top())){
+                while(!symbols.empty() && priority.at(tokens.at(i).content) <= priority.at(symbols.top())){
                     result.push(calculate(result, symbols.top()));
                     symbols.pop();
                 }
-                symbols.push(tokens.at(i).self);
+                symbols.push(tokens.at(i).content);
             }
             
         }
         else{
-            if(tokens[i].type.compare("Variable") == 0){
-                result.push(Num(tokens[i].self, memoryStack->getVariable(tokens[i].self)));
-            }else if(tokens[i].self.compare("__FLAG__") == 0){
+            if(tokens[i].describe.compare("Variable") == 0){
+                result.push(Num(tokens[i].content, memoryStack->getVariable(tokens[i].content)));
+            }else if(tokens[i].content.compare("__FLAG__") == 0){
                 result.push(Num());
             }else{
-                result.push(Num(atoi(tokens[i].self.c_str())));
+                result.push(Num(atoi(tokens[i].content.c_str())));
             }
         }
     }
@@ -139,11 +139,11 @@ Num Calculator::calculate(stack<Num> & result, string symbol){
 
 void Calculator::prehandlerTokens(vector<Token> & tokens){
     for(int i = 0; i < tokens.size(); i++){
-        if(tokens.at(i).self.compare("++") == 0 || tokens.at(i).self.compare("--") == 0){
-            if(i == 0 || find(allSymbols.begin(), allSymbols.end(), tokens[i - 1].self) != allSymbols.end()){
-                tokens.insert(tokens.begin() + i, Token("__FLAG__", -1, 2));
+        if(tokens.at(i).content.compare("++") == 0 || tokens.at(i).content.compare("--") == 0){
+            if(i == 0 || find(allSymbols.begin(), allSymbols.end(), tokens[i - 1].content) != allSymbols.end()){
+                tokens.insert(tokens.begin() + i, Token("__FLAG__", "Constant", -1, -1, -1));
             }else{
-                tokens.insert(tokens.begin() + i + 1, Token("__FLAG__", -1, 2));
+                tokens.insert(tokens.begin() + i + 1, Token("__FLAG__", "Constant", -1, -1, -1));
             }
             i++;
         }
