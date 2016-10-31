@@ -49,6 +49,7 @@ void IteratorManager::jump(int step){
 
 void IteratorManager::jumpTo(vector<Token>::iterator aim){
     it = transferIn(aim);
+    
 }
 
 void IteratorManager::printLine(){
@@ -65,5 +66,7 @@ vector<Token>::iterator IteratorManager::transferIn(vector<Token>::iterator aim)
 
 vector<Token>::iterator IteratorManager::transferOut(vector<Token>::iterator aim){
     long length = aim - tokensBegin;
+    if(it + length > tokens.end())
+        return origin->end();
     return origin->begin() + length;
 }
