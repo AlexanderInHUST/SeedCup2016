@@ -28,6 +28,7 @@ public:
     void moveTo(vector<Token>::iterator aim);
     void jump(int step);
     void jumpTo(vector<Token>::iterator aim);
+    vector<Token>::iterator getEnd();
 private:
     vector<Token>::iterator it;
     vector<Token> tokens;

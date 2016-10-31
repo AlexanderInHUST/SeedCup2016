@@ -70,3 +70,7 @@ vector<Token>::iterator IteratorManager::transferOut(vector<Token>::iterator aim
         return origin->end();
     return origin->begin() + length;
 }
+
+vector<Token>::iterator IteratorManager::getEnd(){
+    return origin->end();
+}
