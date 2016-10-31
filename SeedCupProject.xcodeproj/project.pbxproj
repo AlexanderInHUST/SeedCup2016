@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		198524761DC4FC3000052782 /* iteratorManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 198524741DC4FC3000052782 /* iteratorManager.cpp */; };
+		19B0E9031DC793FF00A6FB82 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19B0E9011DC793FF00A6FB82 /* util.cpp */; };
 		19BE66B91DC3975C0035ECC4 /* wordAnalyst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19BE66B71DC3975C0035ECC4 /* wordAnalyst.cpp */; };
 		19CA4EFE1DBE5C5F0050E0DF /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19CA4EFD1DBE5C5F0050E0DF /* main.cpp */; };
 		19D0E09C1DC43A7500BF2693 /* grammarAnalyst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D0E09A1DC43A7500BF2693 /* grammarAnalyst.cpp */; };
@@ -31,6 +32,8 @@
 /* Begin PBXFileReference section */
 		198524741DC4FC3000052782 /* iteratorManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = iteratorManager.cpp; sourceTree = "<group>"; };
 		198524751DC4FC3000052782 /* iteratorManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = iteratorManager.hpp; sourceTree = "<group>"; };
+		19B0E9011DC793FF00A6FB82 /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
+		19B0E9021DC793FF00A6FB82 /* util.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = util.hpp; sourceTree = "<group>"; };
 		19BE66B71DC3975C0035ECC4 /* wordAnalyst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wordAnalyst.cpp; sourceTree = "<group>"; };
 		19BE66B81DC3975C0035ECC4 /* wordAnalyst.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = wordAnalyst.hpp; sourceTree = "<group>"; };
 		19BE66BB1DC399750035ECC4 /* token.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = token.hpp; sourceTree = "<group>"; };
@@ -90,6 +93,8 @@
 				19BE66BB1DC399750035ECC4 /* token.hpp */,
 				19D0E09A1DC43A7500BF2693 /* grammarAnalyst.cpp */,
 				19D0E09B1DC43A7500BF2693 /* grammarAnalyst.hpp */,
+				19B0E9011DC793FF00A6FB82 /* util.cpp */,
+				19B0E9021DC793FF00A6FB82 /* util.hpp */,
 			);
 			path = SeedCupProject;
 			sourceTree = "<group>";
@@ -157,6 +162,7 @@
 				19D120AD1DC1E6E3003EEF6A /* fileHandler.cpp in Sources */,
 				19D0E09C1DC43A7500BF2693 /* grammarAnalyst.cpp in Sources */,
 				19D120A71DC1D261003EEF6A /* calculator.cpp in Sources */,
+				19B0E9031DC793FF00A6FB82 /* util.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

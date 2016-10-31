@@ -10,6 +10,7 @@
 #define iteratorManager_hpp
 
 #include "token.hpp"
+#include "util.hpp"
 
 #include <stdio.h>
 #include <iostream>

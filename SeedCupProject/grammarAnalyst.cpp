@@ -76,6 +76,10 @@ int GrammarAnalyst::handleCurrentIt(IteratorManager * manager){
     else if(manager->getIt()->describe.compare("note") == 0){
         manager->jump(1);
     }
+    else if(manager->getIt()->describe.compare("boundary") == 0){
+        Util::getResult(manager->getIt()->line);
+        manager->jump(1);
+    }
     return NORMAL_END;
 }
 
@@ -171,10 +175,7 @@ int GrammarAnalyst::handleIf(IteratorManager * manager){
                 return BREAK_END;
         }
         else{
-            while((manager->getIt() + 1)->line == manager->getIt()->line){
-                manager->jump(1);
-            }
-            manager->jump(1);
+            manager->jumpTo(getTheEndOfBlock(manager));
             if(manager->getIt()->content.compare("else") == 0){
                 manager->jump(1);
                 if(manager->getIt()->content.compare("{") != 0){
@@ -204,7 +205,6 @@ int GrammarAnalyst::handleIf(IteratorManager * manager){
                     stack++;
                 else if(manager->getIt()->content == "}")
                     stack--;
-                subTokens.insert(subTokens.end(), *manager->getIt());
                 manager->jump(1);
             }
             stack = 0;
@@ -311,7 +311,7 @@ int GrammarAnalyst::handleFor(IteratorManager * manager){
             }
             if(analyse(&subTokens) == BREAK_END)
                 break;
-            cout << (startOfFor + 2)->line << " ";
+            Util::getResult((startOfFor + 2)->line);
         }
         manager->jumpTo(startOfFor + 2);
         
@@ -432,7 +432,7 @@ int GrammarAnalyst::handleDo(IteratorManager * manager){
         if(flagOfBorder){
             if(analyse(&subTokens) == BREAK_END)
                 break;
-            cout << (startOfCondition)->line << " ";
+            Util::getResult((startOfCondition)->line);
         }
         else{
             if(handleCurrentIt(manager) == BREAK_END)
@@ -579,10 +579,14 @@ int GrammarAnalyst::handleExpression(IteratorManager * manager){
         expression.insert(expression.end(), *manager->getIt());
         manager->move(1);
     }
-    value =  calculator.doCalculator(expression);
-    memoryStack.handleSideEffect(calculator.side_effect);
-    calculator.cleanEffect();
-    return value;
+    if(expression.empty())
+        return 1;
+    else{
+        value =  calculator.doCalculator(expression);
+        memoryStack.handleSideEffect(calculator.side_effect);
+        calculator.cleanEffect();
+        return value;
+    }
 }
 
 void GrammarAnalyst::cleanNewVariable(){

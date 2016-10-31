@@ -49,12 +49,11 @@ void IteratorManager::jump(int step){
 
 void IteratorManager::jumpTo(vector<Token>::iterator aim){
     it = transferIn(aim);
-    
 }
 
 void IteratorManager::printLine(){
     if (lastLine != it->line){
-        cout << it->line << " ";
+        Util::getResult(it->line);
     }
     lastLine = it->line;
 }
