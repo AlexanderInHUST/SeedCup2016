@@ -39,7 +39,7 @@ private:
     int handleInt(IteratorManager * manager);
     int handleIf(IteratorManager * manager);
     int handleFor(IteratorManager * manager);
-    //void handleDo(IteratorManager * manager);
+    int handleDo(IteratorManager * manager);
     int handleWhile(IteratorManager * manager);
     int handlePrintf(IteratorManager * manager);
     int handleExpression(IteratorManager * manager);
@@ -48,7 +48,7 @@ private:
     int handleSelfChange(IteratorManager * manager);
     vector<Token>::iterator getTheEndOfIf(IteratorManager * manager);
     vector<Token>::iterator getTheEndOfWhileOrFor(IteratorManager * manager);
-    //vector<Token>::iterator getTheEndOfDo(IteratorManager * manager);
+    vector<Token>::iterator getTheEndOfDo(IteratorManager * manager);
     vector<Token>::iterator getTheEndOfBlock(IteratorManager * manager);
     int handleExpressionInFor(IteratorManager * manager);
     void cleanNewVariable();
