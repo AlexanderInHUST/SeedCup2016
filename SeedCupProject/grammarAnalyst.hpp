@@ -21,6 +21,9 @@
 #include <vector>
 #include <strstream>
 
+#define NORMAL_END 1
+#define BREAK_END -1
+
 using namespace std;
 
 //string allTypes[8] = {"ReservedWord", "Variable", "DataType", "Symbols",
@@ -29,24 +32,25 @@ using namespace std;
 
 class GrammarAnalyst{
 public:
-    void analyse(vector<Token> * tokens);
+    int analyse(vector<Token> * tokens);
     GrammarAnalyst(vector<Token> * tokens);
 private:
     int handleAssignment(IteratorManager * manager);
-    void handleInt(IteratorManager * manager);
-    void handleIf(IteratorManager * manager);
-    void handleFor(IteratorManager * manager);
+    int handleInt(IteratorManager * manager);
+    int handleIf(IteratorManager * manager);
+    int handleFor(IteratorManager * manager);
     //void handleDo(IteratorManager * manager);
-    void handleWhile(IteratorManager * manager);
-    void handlePrintf(IteratorManager * manager);
+    int handleWhile(IteratorManager * manager);
+    int handlePrintf(IteratorManager * manager);
     int handleExpression(IteratorManager * manager);
-    void handleCurrentIt(IteratorManager * manager);
-    void handleSelfChange(IteratorManager * manager);
+    
+    int handleCurrentIt(IteratorManager * manager);
+    int handleSelfChange(IteratorManager * manager);
     vector<Token>::iterator getTheEndOfIf(IteratorManager * manager);
     vector<Token>::iterator getTheEndOfWhileOrFor(IteratorManager * manager);
     //vector<Token>::iterator getTheEndOfDo(IteratorManager * manager);
     vector<Token>::iterator getTheEndOfBlock(IteratorManager * manager);
-    void handleExpressionInFor(IteratorManager * manager);
+    int handleExpressionInFor(IteratorManager * manager);
     void cleanNewVariable();
     vector<Token>::iterator it;
     Calculator calculator;

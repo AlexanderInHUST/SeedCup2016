@@ -110,7 +110,7 @@ Num Calculator::calculate(stack<Num> & result, string symbol){
             side_effect.erase(variable.name);
             side_effect.insert(pair<string, int>(variable.name, temp - 1));
         }else{
-            side_effect.insert(pair<string, int>(variable.name, 1));
+            side_effect.insert(pair<string, int>(variable.name, -1));
         }
         return (isA) ? variable.num - 1 : variable.num;
     }else if(symbol.compare("*") == 0){

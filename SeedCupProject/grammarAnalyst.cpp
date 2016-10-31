@@ -16,32 +16,37 @@ GrammarAnalyst::GrammarAnalyst(vector<Token> * tokens):calculator(&memoryStack){
 // Analyse a part of codes
 //
 
-void GrammarAnalyst::analyse(vector<Token> * tokens){
+int GrammarAnalyst::analyse(vector<Token> * tokens){
+    int breakFlag;
     IteratorManager manager(tokens);
     newVariable.push(vector<string>());
     for(manager.jumpTo(tokens->begin()); manager.getIt() != tokens->end(); ){
-        handleCurrentIt(&manager);
+        breakFlag = handleCurrentIt(&manager);
+        if(breakFlag == BREAK_END)
+            return breakFlag;
     }
     cleanNewVariable();
+    return NORMAL_END;
 }
 
 //
 // Analyse a block of codes
+// Return -1 when getting break
 //
 
-void GrammarAnalyst::handleCurrentIt(IteratorManager * manager){
+int GrammarAnalyst::handleCurrentIt(IteratorManager * manager){
     if(manager->getIt()->describe.compare("keyword") == 0){
         if(manager->getIt()->content.compare("while") == 0){
-            handleWhile(manager);
+            return handleWhile(manager);
         }
         else if(manager->getIt()->content.compare("if") == 0){
-            handleIf(manager);
+            return handleIf(manager);
         }
         else if(manager->getIt()->content.compare("for") == 0){
-            handleFor(manager);
+            return handleFor(manager);
         }
         else if(manager->getIt()->content.compare("int") == 0){
-            handleInt(manager);
+            return handleInt(manager);
         }
         else if(manager->getIt()->content.compare("do") == 0){
             //handleDo(&manager);
@@ -51,35 +56,37 @@ void GrammarAnalyst::handleCurrentIt(IteratorManager * manager){
                 memoryStack.popVariable(newVariable.top()[i]);
             }
             newVariable.pop();
-            return;
+            manager->move(1);
+            return BREAK_END;
         }
     }
     else if(manager->getIt()->describe.compare("identf") == 0){
         if(manager->getIt()->content.compare("printf") == 0){
-            handlePrintf(manager);
+            return handlePrintf(manager);
         }
         else if((manager->getIt() + 2)->describe.compare("boundary") == 0){
-            handleSelfChange(manager);
+            return handleSelfChange(manager);
         }
         else{
-            handleAssignment(manager);
+            return handleAssignment(manager);
         }
     }else if(manager->getIt()->describe.compare("operator") == 0){
-        handleSelfChange(manager);
+        return handleSelfChange(manager);
     }
     else if(manager->getIt()->describe.compare("note") == 0){
         manager->jump(1);
     }
-
+    return NORMAL_END;
 }
 
 //
 // Handle self change
 //
 
-void GrammarAnalyst::handleSelfChange(IteratorManager * manager){
+int GrammarAnalyst::handleSelfChange(IteratorManager * manager){
     handleExpression(manager);
     manager->jump(1);
+    return NORMAL_END;
 }
 
 //
@@ -113,14 +120,14 @@ int GrammarAnalyst::handleAssignment(IteratorManager * manager){
 // Handle int
 //
 
-void GrammarAnalyst::handleInt(IteratorManager * manager){
+int GrammarAnalyst::handleInt(IteratorManager * manager){
     vector<string> * variableInState = &newVariable.top();
-    manager->move(1);
+    manager->jump(1);
     while(manager->getIt()->describe.compare("identf") == 0){
         variableInState->insert(variableInState->end(), manager->getIt()->content);
         memoryStack.pushVariable(manager->getIt()->content, 0);
         if((manager->getIt() + 1)->content == ";"){
-            manager->move(2);
+            manager->jump(2);
             break;
         }
         else if((manager->getIt() + 1)->content == "="){
@@ -129,16 +136,17 @@ void GrammarAnalyst::handleInt(IteratorManager * manager){
                 break;
         }
         else if((manager->getIt() + 1)->content == ","){
-            manager->move(2);
+            manager->jump(2);
         }
     }
+    return NORMAL_END;
 }
 
 //
 // Handle if
 //
 
-void GrammarAnalyst::handleIf(IteratorManager * manager){
+int GrammarAnalyst::handleIf(IteratorManager * manager){
     vector<Token> subTokens;
     int stack = 0;
     bool flagOfIfBorder = false;
@@ -159,7 +167,8 @@ void GrammarAnalyst::handleIf(IteratorManager * manager){
     }
     if(!flagOfIfBorder){
         if(expression){
-            handleCurrentIt(manager);
+            if(handleCurrentIt(manager) == BREAK_END)
+                return BREAK_END;
         }
         else{
             while((manager->getIt() + 1)->line == manager->getIt()->line){
@@ -169,7 +178,8 @@ void GrammarAnalyst::handleIf(IteratorManager * manager){
             if(manager->getIt()->content.compare("else") == 0){
                 manager->jump(1);
                 if(manager->getIt()->content.compare("{") != 0){
-                    handleCurrentIt(manager);
+                    if(handleCurrentIt(manager) == BREAK_END)
+                        return BREAK_END;
                 }
                 else{
                     manager->jump(1);
@@ -182,7 +192,8 @@ void GrammarAnalyst::handleIf(IteratorManager * manager){
                         manager->jump(1);
                     }
                     manager->jump(1);
-                    analyse(&subTokens);
+                    if(analyse(&subTokens) == BREAK_END)
+                        return BREAK_END;
                 }
             }
         }
@@ -202,7 +213,8 @@ void GrammarAnalyst::handleIf(IteratorManager * manager){
             if(manager->getIt()->content.compare("else") == 0){
                 manager->jump(1);
                 if(manager->getIt()->content.compare("{") != 0){
-                    handleCurrentIt(manager);
+                    if(handleCurrentIt(manager) == BREAK_END)
+                        return BREAK_END;
                 }
                 else{
                     manager->jump(1);
@@ -216,7 +228,8 @@ void GrammarAnalyst::handleIf(IteratorManager * manager){
                     }
                     stack = 0;
                     manager->jump(1);
-                    analyse(&subTokens);
+                    if(analyse(&subTokens) == BREAK_END)
+                        return BREAK_END;
                 }
             }
         }
@@ -231,10 +244,12 @@ void GrammarAnalyst::handleIf(IteratorManager * manager){
             }
             stack = 0;
             manager->jump(1);
-            analyse(&subTokens);
+            if(analyse(&subTokens) == BREAK_END)
+                return BREAK_END;
         }
     }
     manager->jumpTo(endOfIt);
+    return NORMAL_END;
 }
 
 
@@ -257,7 +272,7 @@ void GrammarAnalyst::handleDo(){
 // Handle for
 //
 
-void GrammarAnalyst::handleFor(IteratorManager * manager){
+int GrammarAnalyst::handleFor(IteratorManager * manager){
     vector<Token> subTokens;
     int stack = 0;
     bool flagOfBorder = false;
@@ -295,7 +310,8 @@ void GrammarAnalyst::handleFor(IteratorManager * manager){
             manager->jump(1);
         }
         if(!flagOfBorder){
-            handleCurrentIt(manager);
+            if(handleCurrentIt(manager) == BREAK_END)
+                break;
         }
         else {
             if(!flagOfRead){
@@ -309,7 +325,8 @@ void GrammarAnalyst::handleFor(IteratorManager * manager){
                 }
                 flagOfRead = true;
             }
-            analyse(&subTokens);
+            if(analyse(&subTokens) == BREAK_END)
+                break;
             cout << (startOfFor + 2)->line << " ";
         }
         manager->jumpTo(startOfFor + 2);
@@ -317,21 +334,23 @@ void GrammarAnalyst::handleFor(IteratorManager * manager){
     }
     manager->jumpTo(endOfFor);
     cleanNewVariable();
+    return NORMAL_END;
 }
 
-void GrammarAnalyst::handleExpressionInFor(IteratorManager * manager){
+int GrammarAnalyst::handleExpressionInFor(IteratorManager * manager){
     while(true){
         handleCurrentIt(manager);
         if((manager->getIt() - 1)->content.compare(";") == 0 || (manager->getIt() - 1)->content.compare(")") == 0)
             break;
     }
+    return NORMAL_END;
 }
 
 //
 // Handle while
 //
 
-void GrammarAnalyst::handleWhile(IteratorManager * manager){
+int GrammarAnalyst::handleWhile(IteratorManager * manager){
     vector<Token> subTokens;
     int stack = 0;
     bool flagOfBorder = false;
@@ -350,7 +369,8 @@ void GrammarAnalyst::handleWhile(IteratorManager * manager){
             manager->jump(1);
         }
         if(!flagOfBorder){
-            handleCurrentIt(manager);
+            if(handleCurrentIt(manager) == BREAK_END)
+                break;
         }
         else {
             if(!flagOfRead){
@@ -364,13 +384,15 @@ void GrammarAnalyst::handleWhile(IteratorManager * manager){
                 }
                 flagOfRead = true;
             }
-            analyse(&subTokens);
+            if(analyse(&subTokens) == BREAK_END)
+                break;
             cout << (startOfWhile + 2)->line << " ";
         }
         manager->jumpTo(startOfWhile + 2);
         
     }
     manager->jumpTo(endOfWhile);
+    return NORMAL_END;
 }
 
 vector<Token>::iterator GrammarAnalyst::getTheEndOfWhileOrFor(IteratorManager * manager){
@@ -459,13 +481,14 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfBlock(IteratorManager * manag
 // Handle printf
 //
 
-void GrammarAnalyst::handlePrintf(IteratorManager * manager){
+int GrammarAnalyst::handlePrintf(IteratorManager * manager){
     manager->move(5);
     while(manager->getIt()->content == ","){
         manager->move(1);
         handleExpression(manager);
     }
     manager->jump(2);
+    return NORMAL_END;
 }
 
 //
