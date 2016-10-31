@@ -147,6 +147,20 @@ void Calculator::prehandlerTokens(vector<Token> & tokens){
             }
             i++;
         }
+        else if(tokens.at(i).content.compare("-") == 0){
+            if(i == 0 || !(tokens.at(i - 1).describe.compare("identf") == 0 && tokens.at(i + 1).describe.compare("identf") == 0)){
+                Token tempVar = tokens[i + 1];
+                char temp[100];
+                int value = memoryStack->getVariable(tempVar.content);
+                value = -value;
+                sprintf(temp, "%d", value);
+                string valueString = string(temp);
+                tempVar.content = valueString;
+                tempVar.describe = "constant";
+                tokens.erase(tokens.begin() + i, tokens.begin() + i + 2);
+                tokens.insert(tokens.begin() + i, tempVar);
+            }
+        }
     }
 }
 
