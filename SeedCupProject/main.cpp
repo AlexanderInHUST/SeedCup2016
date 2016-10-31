@@ -29,6 +29,5 @@ int main(int argc, const char * argv[]) {
     tokens = wordAnalyst.getTokens();
     GrammarAnalyst grammarAnalyst(&tokens);
     grammarAnalyst.analyse(&tokens);
-    
     return 0;
 }

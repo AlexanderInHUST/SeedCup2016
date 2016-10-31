@@ -23,20 +23,28 @@ vector<Token>::iterator IteratorManager::getIt(){
 
 void IteratorManager::move(int step){
     for (int i = 0; i < step; i++){
-        it++;
+        if(it > tokens.end())
+            it = tokens.end();
+        else
+            it++;
         printLine();
     }
 }
 
 void IteratorManager::moveTo(vector<Token>::iterator aim){
     while (it != transferIn(aim)){
-        it++;
+        if(it > tokens.end())
+            it = tokens.end();
+        else
+            it++;
         printLine();
     }
 }
 
 void IteratorManager::jump(int step){
     it = it + step;
+    if(it > tokens.end())
+        it = tokens.end();
 }
 
 void IteratorManager::jumpTo(vector<Token>::iterator aim){
