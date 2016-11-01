@@ -51,6 +51,7 @@ void IteratorManager::jumpTo(vector<Token>::iterator aim){
     it = transferIn(aim);
 }
 
+//考虑输出结果后，如果当前line与前一个考虑输出的结果的line不同，才进行输出
 void IteratorManager::printLine(){
     if (lastLine != it->line){
         Util::getResult(it->line);
@@ -58,6 +59,7 @@ void IteratorManager::printLine(){
     lastLine = it->line;
 }
 
+//通过计算aim与相应的vector的begin的差值，就可以获得另一个vector所对应的位置
 vector<Token>::iterator IteratorManager::transferIn(vector<Token>::iterator aim){
     long length = aim - originBegin;
     return tokens.begin() + length;

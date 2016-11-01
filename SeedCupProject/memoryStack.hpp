@@ -18,19 +18,15 @@
 
 using namespace std;
 
+//模拟变量树
 class MemoryStack{
 public:
-    map<string, stack<int>> memory;
-    
-    //Pop a shate of variable
-    void popVariable(string name);
-    //Push a new state of variable
-    void pushVariable(string name, int value);
-    //Reset the value of a variable in the very state
-    void setVariable(string name, int value);
-    int getVariable(string name);
-    //Handle the effect and DO NOT forget to use cleanEffect in Calculator
-    void handleSideEffect(map<string, int> sideEffect);
+    map<string, stack<int>> memory; //存储所有变量的值的一张KV表
+    void popVariable(string name); //将变量名为name的变量所拥有的内存栈pop一次
+    void pushVariable(string name, int value); //将value值push进变量名为name的变量所拥有的内存栈
+    void setVariable(string name, int value); //将变量名为name的变量所拥有的内存栈top的值修改为value的值
+    int getVariable(string name); //得到变量名为name的变量所拥有的内存栈的top
+    void handleSideEffect(map<string, int> sideEffect); //将表达式计算因为自增自减得到的副作用处理到KV之中
 private:
 };
 

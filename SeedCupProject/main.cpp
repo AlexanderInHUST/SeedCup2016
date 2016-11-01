@@ -7,7 +7,6 @@
 
 #include "calculator.hpp"
 #include "memoryStack.hpp"
-#include "fileHandler.hpp"
 #include "wordAnalyst.hpp"
 #include "grammarAnalyst.hpp"
 
@@ -17,8 +16,6 @@
 #include <vector>
 #include <strstream>
 
-//  string allTypes[8] = {"ReservedWord", "Variable", "Constant", "Symbols", "Border", "End"};
-
 using namespace::std;
 
 int main(int argc, const char * argv[]) {
@@ -27,7 +24,7 @@ int main(int argc, const char * argv[]) {
     WordAnalyst wordAnalyst;
     vector<Token> tokens;
     tokens = wordAnalyst.getTokens();
-    GrammarAnalyst grammarAnalyst(&tokens);
+    GrammarAnalyst grammarAnalyst;
     grammarAnalyst.analyse(&tokens);
     Util::printResult();
     return 0;

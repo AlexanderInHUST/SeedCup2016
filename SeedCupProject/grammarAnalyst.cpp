@@ -8,13 +8,9 @@
 
 #include "grammarAnalyst.hpp"
 
-GrammarAnalyst::GrammarAnalyst(vector<Token> * tokens):calculator(&memoryStack){
-    calculator = Calculator(&memoryStack);
+GrammarAnalyst::GrammarAnalyst():calculator(&memoryStack){
+    calculator = Calculator(&memoryStack); //将这个类中的MemoryStack的地址传给Calculator，使其能够获取变量的值
 }
-
-//
-// Analyse a part of codes
-//
 
 int GrammarAnalyst::analyse(vector<Token> * tokens){
     int breakFlag;

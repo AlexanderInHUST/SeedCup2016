@@ -10,8 +10,7 @@
 
 using namespace std;
 
-//stack<map<string, int>> memory;
-
+//如果已经出现了这个变量了，就直接在它所拥有的栈中push，否则先insert，再push
 void MemoryStack::pushVariable(string name, int value){
     map<string, stack<int>>::iterator it = memory.find(name);
     if(it != memory.end()){
@@ -46,6 +45,7 @@ int MemoryStack::getVariable(string name){
     return 0;
 }
 
+//遍历传入的副作用KV表，依次改变所对应的值即可
 void MemoryStack::handleSideEffect(map<string, int> sideEffect){
     for(map<string, int>::iterator it = sideEffect.begin(); it != sideEffect.end(); it++){
         setVariable(it->first, getVariable(it->first) + it->second);

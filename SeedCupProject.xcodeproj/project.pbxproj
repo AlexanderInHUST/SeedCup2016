@@ -14,7 +14,6 @@
 		19D0E09C1DC43A7500BF2693 /* grammarAnalyst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D0E09A1DC43A7500BF2693 /* grammarAnalyst.cpp */; };
 		19D120A71DC1D261003EEF6A /* calculator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D120A51DC1D261003EEF6A /* calculator.cpp */; };
 		19D120AA1DC1D7A0003EEF6A /* memoryStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D120A81DC1D7A0003EEF6A /* memoryStack.cpp */; };
-		19D120AD1DC1E6E3003EEF6A /* fileHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19D120AB1DC1E6E3003EEF6A /* fileHandler.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,8 +44,6 @@
 		19D120A61DC1D261003EEF6A /* calculator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = calculator.hpp; sourceTree = "<group>"; };
 		19D120A81DC1D7A0003EEF6A /* memoryStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memoryStack.cpp; sourceTree = "<group>"; };
 		19D120A91DC1D7A0003EEF6A /* memoryStack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = memoryStack.hpp; sourceTree = "<group>"; };
-		19D120AB1DC1E6E3003EEF6A /* fileHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fileHandler.cpp; sourceTree = "<group>"; };
-		19D120AC1DC1E6E3003EEF6A /* fileHandler.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = fileHandler.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,8 +83,6 @@
 				198524751DC4FC3000052782 /* iteratorManager.hpp */,
 				19D120A91DC1D7A0003EEF6A /* memoryStack.hpp */,
 				19D120A81DC1D7A0003EEF6A /* memoryStack.cpp */,
-				19D120AC1DC1E6E3003EEF6A /* fileHandler.hpp */,
-				19D120AB1DC1E6E3003EEF6A /* fileHandler.cpp */,
 				19BE66B71DC3975C0035ECC4 /* wordAnalyst.cpp */,
 				19BE66B81DC3975C0035ECC4 /* wordAnalyst.hpp */,
 				19BE66BB1DC399750035ECC4 /* token.hpp */,
@@ -159,7 +154,6 @@
 				198524761DC4FC3000052782 /* iteratorManager.cpp in Sources */,
 				19BE66B91DC3975C0035ECC4 /* wordAnalyst.cpp in Sources */,
 				19D120AA1DC1D7A0003EEF6A /* memoryStack.cpp in Sources */,
-				19D120AD1DC1E6E3003EEF6A /* fileHandler.cpp in Sources */,
 				19D0E09C1DC43A7500BF2693 /* grammarAnalyst.cpp in Sources */,
 				19D120A71DC1D261003EEF6A /* calculator.cpp in Sources */,
 				19B0E9031DC793FF00A6FB82 /* util.cpp in Sources */,
