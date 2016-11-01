@@ -48,6 +48,7 @@ private:
     vector<Token>::iterator getTheEndOfWhileOrFor(IteratorManager * manager); //得到for\while语句块结束的Iterator
     vector<Token>::iterator getTheEndOfDo(IteratorManager * manager); //得到do-while语句块结束的Iterator
     vector<Token>::iterator getTheEndOfBlock(IteratorManager * manager); //分析当前Token所示的语句块，调用上面的某一个方法
+    vector<Token>::iterator getTheEndOfBracket(IteratorManager * manager); //得到{}的终点之后的token
     
     int handleExpressionInFor(IteratorManager * manager); //单独处理for中可能出现的逗号表达式
     void cleanNewVariable(); //清理本次作用域声明的变量的值

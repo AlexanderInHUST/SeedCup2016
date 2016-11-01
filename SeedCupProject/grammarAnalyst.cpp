@@ -15,20 +15,15 @@ GrammarAnalyst::GrammarAnalyst():calculator(&memoryStack){
 int GrammarAnalyst::analyse(vector<Token> * tokens){
     int breakFlag;
     IteratorManager manager(tokens);
-    newVariable.push(vector<string>());
+    newVariable.push(vector<string>()); //push新的一层stack，存储当前作用域变量的变量名
     for(manager.jumpTo(tokens->begin()); manager.getIt() != tokens->end(); ){
         breakFlag = handleCurrentIt(&manager);
-        if(breakFlag == BREAK_END)
+        if(breakFlag == BREAK_END) //返回了BREAK_END，不处理地将其继续传上去
             return breakFlag;
     }
-    cleanNewVariable();
+    cleanNewVariable(); //分析完之后，清理当前作用域的所有变量
     return NORMAL_END;
 }
-
-//
-// Analyse a block of codes
-// Return -1 when getting break
-//
 
 int GrammarAnalyst::handleCurrentIt(IteratorManager * manager){
     if(manager->getIt()->describe.compare("keyword") == 0){
@@ -47,7 +42,7 @@ int GrammarAnalyst::handleCurrentIt(IteratorManager * manager){
         else if(manager->getIt()->content.compare("do") == 0){
             return handleDo(manager);
         }
-        else if(manager->getIt()->content.compare("break") == 0){
+        else if(manager->getIt()->content.compare("break") == 0){ //遇见break语句之后，清理当前作用域所有变量，然后返回BREAK_END
             for(int i = 0; i < newVariable.top().size(); i++){
                 memoryStack.popVariable(newVariable.top()[i]);
             }
@@ -79,35 +74,27 @@ int GrammarAnalyst::handleCurrentIt(IteratorManager * manager){
     return NORMAL_END;
 }
 
-//
-// Handle self change
-//
-
 int GrammarAnalyst::handleSelfChange(IteratorManager * manager){
-    handleExpression(manager);
+    handleExpression(manager); //直接当做一个表达式进行处理即可
     manager->jump(1);
     return NORMAL_END;
 }
 
-//
-// Handle assignment
-//
-
 int GrammarAnalyst::handleAssignment(IteratorManager * manager){
     bool isLast = true;
     vector<Token>::iterator temp = manager->getIt();
-    do{
+    do{ //判断当前是不是已经到达了类似于a = b = c = d;这样的赋值式的最后一位
         manager->jump(1);
         if(manager->getIt()->content.compare("=") == 0)
             isLast = false;
     }while(manager->getIt()->content.compare(";") != 0 && manager->getIt()->content.compare(",") != 0 );
     manager->jumpTo(temp);
-    if(isLast){
+    if(isLast){ //如果是的话，直接返回最后处理当前视为表达式的右值的结果
         int value = handleExpression(manager);
         manager->jump(1);
         return value;
     }
-    else{
+    else{ //如果不是的话，递归地计算下一个=之后的值，然后返回计算出来的值
         string name = manager->getIt()->content;
         manager->move(2);
         int value = handleAssignment(manager);
@@ -116,69 +103,60 @@ int GrammarAnalyst::handleAssignment(IteratorManager * manager){
     }
 }
 
-//
-// Handle int
-//
-
 int GrammarAnalyst::handleInt(IteratorManager * manager){
     vector<string> * variableInState = &newVariable.top();
     manager->jump(1);
     while(manager->getIt()->describe.compare("identf") == 0){
         variableInState->insert(variableInState->end(), manager->getIt()->content);
         memoryStack.pushVariable(manager->getIt()->content, 0);
-        if((manager->getIt() + 1)->content == ";"){
+        if((manager->getIt() + 1)->content == ";"){ //如果是int a; 直接结束
             manager->jump(2);
             break;
         }
-        else if((manager->getIt() + 1)->content == "="){
+        else if((manager->getIt() + 1)->content == "="){ //如果是 int a = 3; 将后面的 a = 3视为一个赋值式，直接调用处理赋值运算的方法
             handleAssignment(manager);
             if((manager->getIt() - 1)->content == ";")
                 break;
         }
-        else if((manager->getIt() + 1)->content == ","){
+        else if((manager->getIt() + 1)->content == ","){ //如果是 int a , b, c; 跳到下一个变量的名字
             manager->jump(2);
         }
     }
     return NORMAL_END;
 }
 
-//
-// Handle if
-//
-
 int GrammarAnalyst::handleIf(IteratorManager * manager){
     vector<Token> subTokens;
     int stack = 0;
     bool flagOfIfBorder = false;
     bool expression;
-    vector<Token>::iterator startOfIf = manager->getIt();
-    vector<Token>::iterator endOfIt;
+    vector<Token>::iterator startOfIf = manager->getIt(); // if语句块的起点
+    vector<Token>::iterator endOfIt; // if语句块的终点的下一位Token
     
-    // To get the end iterator of if block
     endOfIt = getTheEndOfBlock(manager);
     manager->jumpTo(startOfIf);
     
     manager->jump(2);
-    expression = (handleExpression(manager) == 0) ? false : true;
+    expression = (handleExpression(manager) == 0) ? false : true; // 计算表达式的结果
     manager->jump(1);
-    if(manager->getIt()->content == "{"){
+    if(manager->getIt()->content == "{"){ //判断if之后是否有{
         flagOfIfBorder = true;
         manager->jump(1);
     }
     if(!flagOfIfBorder){
         if(expression){
-            if(handleCurrentIt(manager) == BREAK_END)
+            if(handleCurrentIt(manager) == BREAK_END) //如果if后面没有{，并且表达式为true，就分析处理下一个语句块
                 return BREAK_END;
         }
-        else{
-            manager->jumpTo(getTheEndOfBlock(manager));
-            if(manager->getIt()->content.compare("else") == 0){
+        else{ //如果if后面没有{，并且表达式为false
+            manager->jumpTo(getTheEndOfBlock(manager)); //跳过下一个语句块
+            if(manager->getIt()->content.compare("else") == 0){ //如果有else的话，执行else中的内容
                 manager->jump(1);
                 if(manager->getIt()->content.compare("{") != 0){
                     if(handleCurrentIt(manager) == BREAK_END)
                         return BREAK_END;
                 }
-                else{
+                else{ //else之后有{，将两个{}之间的代码重新截取出来，然后调用主分析方法，对截取部分进行递归分析
                     manager->jump(1);
                     while(!(manager->getIt()->content == "}" && stack == 0)){
                         if(manager->getIt()->content == "{")
@@ -195,8 +173,8 @@ int GrammarAnalyst::handleIf(IteratorManager * manager){
             }
         }
     }else{
-        if(!expression){
-            while(!(manager->getIt()->content == "}" && stack == 0)){
+        if(!expression){ //如果if后面有{，并且表达式为false
+            while(!(manager->getIt()->content == "}" && stack == 0)){ //跳过if后面的{}块
                 if(manager->getIt()->content == "{")
                     stack++;
                 else if(manager->getIt()->content == "}")
@@ -206,7 +184,7 @@ int GrammarAnalyst::handleIf(IteratorManager * manager){
             stack = 0;
             manager->jump(1);
             
-            if((manager->getIt() != manager->getEnd()) && manager->getIt()->content.compare("else") == 0){
+            if((manager->getIt() != manager->getEnd()) && manager->getIt()->content.compare("else") == 0){ //如果有else的话
                 manager->jump(1);
                 if(manager->getIt()->content.compare("{") != 0){
                     if(handleCurrentIt(manager) == BREAK_END)
@@ -229,7 +207,7 @@ int GrammarAnalyst::handleIf(IteratorManager * manager){
                 }
             }
         }
-        else{
+        else{ //如果表达式为true，直接执行后面紧接着{}块
             while(!(manager->getIt()->content == "}" && stack == 0)){
                 if(manager->getIt()->content == "{")
                     stack++;
@@ -244,13 +222,9 @@ int GrammarAnalyst::handleIf(IteratorManager * manager){
                 return BREAK_END;
         }
     }
-    manager->jumpTo(endOfIt);
+    manager->jumpTo(endOfIt); //运行完之后，跳到if块的末尾
     return NORMAL_END;
 }
-
-//
-// Handle for
-//
 
 int GrammarAnalyst::handleFor(IteratorManager * manager){
     vector<Token> subTokens;
@@ -258,14 +232,14 @@ int GrammarAnalyst::handleFor(IteratorManager * manager){
     bool flagOfBorder = false;
     bool flagOfRead = false;
     
-    vector<Token>::iterator startOfFor = manager->getIt();
-    vector<Token>::iterator endOfFor;
+    vector<Token>::iterator startOfFor = manager->getIt(); // for语句块的起点
+    vector<Token>::iterator endOfFor; // for语句块的终点
     endOfFor = getTheEndOfBlock(manager);
     manager->jumpTo(startOfFor);
     
-    vector<Token>::iterator startOfCondition;
-    vector<Token>::iterator startOfThirdExp;
-    vector<Token>::iterator startOfContent;
+    vector<Token>::iterator startOfCondition; // for中间条件判断的起点
+    vector<Token>::iterator startOfThirdExp; // for中第三个表达式的起点
+    vector<Token>::iterator startOfContent; // for的执行代码块的起点
     while(manager->getIt()->content.compare(";") != 0)
         manager->jump(1);
     manager->jump(1);
@@ -283,7 +257,7 @@ int GrammarAnalyst::handleFor(IteratorManager * manager){
     newVariable.push(vector<string>());
     manager->move(2);
     for(handleExpressionInFor(manager); manager->jumpTo(startOfCondition), handleExpression(manager);
-        manager->jumpTo(startOfThirdExp),handleExpressionInFor(manager)){
+        manager->jumpTo(startOfThirdExp),handleExpressionInFor(manager)){ // 把相应的处理带入
         manager->jumpTo(startOfContent);
         if(manager->getIt()->content == "{"){
             flagOfBorder = true;
@@ -294,7 +268,7 @@ int GrammarAnalyst::handleFor(IteratorManager * manager){
                 break;
         }
         else {
-            if(!flagOfRead){
+            if(!flagOfRead){ // 如果已经读取了token流的一段了，就不必重复读取
                 while(!(manager->getIt()->content == "}" && stack == 0)){
                     if(manager->getIt()->content == "{")
                         stack++;
@@ -314,10 +288,10 @@ int GrammarAnalyst::handleFor(IteratorManager * manager){
     }
     manager->jumpTo(endOfFor);
     cleanNewVariable();
-    return NORMAL_END;
+    return NORMAL_END; // 所有作用域之中的BREAK_END信息在这里被拦截下来，之后继续返回NORMAL_END，以控制break只跳出当前循环
 }
 
-int GrammarAnalyst::handleExpressionInFor(IteratorManager * manager){
+int GrammarAnalyst::handleExpressionInFor(IteratorManager * manager){ // 单独处理for条件中会出现的逗号表达式
     while(true){
         handleCurrentIt(manager);
         if((manager->getIt() - 1)->content.compare(";") == 0 || (manager->getIt() - 1)->content.compare(")") == 0)
@@ -326,23 +300,19 @@ int GrammarAnalyst::handleExpressionInFor(IteratorManager * manager){
     return NORMAL_END;
 }
 
-//
-// Handle while
-//
-
 int GrammarAnalyst::handleWhile(IteratorManager * manager){
     vector<Token> subTokens;
     int stack = 0;
     bool flagOfBorder = false;
     bool flagOfRead = false;
     
-    vector<Token>::iterator startOfWhile = manager->getIt();
-    vector<Token>::iterator endOfWhile;
+    vector<Token>::iterator startOfWhile = manager->getIt(); // while语句块的起点
+    vector<Token>::iterator endOfWhile; //while语句块的终点
     endOfWhile = getTheEndOfBlock(manager);
     manager->jumpTo(startOfWhile);
     
     manager->move(2);
-    while(handleExpression(manager) == 1){
+    while(handleExpression(manager) == 1){ // 每次判断条件是否符合
         manager->jump(1);
         if(manager->getIt()->content == "{"){
             flagOfBorder = true;
@@ -353,7 +323,7 @@ int GrammarAnalyst::handleWhile(IteratorManager * manager){
                 break;
         }
         else {
-            if(!flagOfRead){
+            if(!flagOfRead){ // 如果已经读取了token流的一段了，就不必重复读取
                 while(!(manager->getIt()->content == "}" && stack == 0)){
                     if(manager->getIt()->content == "{")
                         stack++;
@@ -366,18 +336,14 @@ int GrammarAnalyst::handleWhile(IteratorManager * manager){
             }
             if(analyse(&subTokens) == BREAK_END)
                 break;
-            cout << (startOfWhile + 2)->line << " ";
+            Util::getResult((startOfWhile + 2)->line);
         }
         manager->jumpTo(startOfWhile + 2);
         
     }
     manager->jumpTo(endOfWhile);
-    return NORMAL_END;
+    return NORMAL_END; // 所有作用域之中的BREAK_END信息在这里被拦截下来，之后继续返回NORMAL_END，以控制break只跳出当前循环
 }
-
-//
-// Handle do-while
-//
 
 int GrammarAnalyst::handleDo(IteratorManager * manager){
     vector<Token> subTokens;
@@ -385,9 +351,9 @@ int GrammarAnalyst::handleDo(IteratorManager * manager){
     bool flagOfBorder = false;
     bool flagOfRead = false;
     
-    vector<Token>::iterator startOfDo = manager->getIt();
-    vector<Token>::iterator endOfDo;
-    vector<Token>::iterator startOfCondition;
+    vector<Token>::iterator startOfDo = manager->getIt(); // do-while语句块的起点
+    vector<Token>::iterator endOfDo; // do-while语句块的终点
+    vector<Token>::iterator startOfCondition; // do-while语句块的条件判断起点
     endOfDo = getTheEndOfBlock(manager);
     manager->jumpTo(startOfDo);
     
@@ -436,12 +402,8 @@ int GrammarAnalyst::handleDo(IteratorManager * manager){
         }
     }while(manager->jumpTo(startOfCondition), handleExpression(manager));
     manager->jumpTo(endOfDo);
-    return NORMAL_END;
+    return NORMAL_END;  // 所有作用域之中的BREAK_END信息在这里被拦截下来，之后继续返回NORMAL_END，以控制break只跳出当前循环
 }
-
-//
-// To get the end iterator of a part of very code
-//
 
 vector<Token>::iterator GrammarAnalyst::getTheEndOfWhileOrFor(IteratorManager * manager){
     int stack = 0;
@@ -530,6 +492,11 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfDo(IteratorManager * manager)
         manager->jump(1);
     }
     return manager->getIt() + 1;
+}
+
+vector<Token>::iterator GrammarAnalyst::getTheEndOfBracket(IteratorManager * manager){
+    
+    
 }
 
 vector<Token>::iterator GrammarAnalyst::getTheEndOfBlock(IteratorManager * manager){
