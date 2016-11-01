@@ -199,7 +199,7 @@ int GrammarAnalyst::handleIf(IteratorManager * manager){
             }
         }
         else{ //如果表达式为true，直接执行后面紧接着{}块
-            while(!(manager->getIt()->content == "}" && stack == 0)){
+            while(!(manager->getIt()->content == "}" && stack == 1)){
                 if(manager->getIt()->content == "{")
                     stack++;
                 else if(manager->getIt()->content == "}")
