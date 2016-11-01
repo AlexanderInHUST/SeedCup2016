@@ -68,7 +68,6 @@ int GrammarAnalyst::handleCurrentIt(IteratorManager * manager){
         manager->jump(1);
     }
     else if(manager->getIt()->describe.compare("boundary") == 0){
-        Util::getResult(manager->getIt()->line);
         manager->jump(1);
     }
     return NORMAL_END;
