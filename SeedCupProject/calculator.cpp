@@ -85,7 +85,7 @@ Num Calculator::calculate(stack<Num> & result, string symbol){
     result.pop();
     Num variable = b;
     if(symbol.compare("++") == 0){
-        bool isA;
+        bool isA = false;
         if(b.name.compare("__FLAG__") == 0){
             isA = true;
             variable = a;
@@ -100,7 +100,7 @@ Num Calculator::calculate(stack<Num> & result, string symbol){
         }
         return (isA) ? variable.num + 1 : variable.num;
     }else if(symbol.compare("--") == 0){
-        bool isA;
+        bool isA = false;
         if(b.name.compare("__FLAG__") == 0){
             isA = true;
             variable = a;
@@ -151,8 +151,7 @@ void Calculator::prehandlerTokens(vector<Token> & tokens){
         }
         //如果出现了出现在变量前面的负号，就从MemoryStack中读出相应的结果，清除负号以及变量的Token，然后再将读出的结果加上负号再插入进去
         else if(tokens.at(i).content.compare("-") == 0){
-            if(i == 0 || !((tokens.at(i - 1).describe.compare("identf") == 0 || tokens.at(i - 1).describe.compare("constant") == 0) &&
-                           (tokens.at(i + 1).describe.compare("identf") == 0 || tokens.at(i + 1).describe.compare("constant") == 0))){
+            if(i == 0 || (tokens.at(i - 1).describe.compare("operator") == 0)){
                 Token tempVar = tokens[i + 1];
                 char temp[100];
                 int value = memoryStack->getVariable(tempVar.content);

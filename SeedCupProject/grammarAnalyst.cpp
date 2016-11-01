@@ -232,6 +232,7 @@ int GrammarAnalyst::handleIf(IteratorManager * manager){
 }
 
 int GrammarAnalyst::handleFor(IteratorManager * manager){
+    int endFlag = NORMAL_END;
     vector<Token> subTokens;
     int stack = 0;
     bool flagOfBorder = false;
@@ -270,12 +271,16 @@ int GrammarAnalyst::handleFor(IteratorManager * manager){
             manager->jump(1);
         }
         if(!flagOfBorder){
-            vector<Token>::iterator startOfTemp = manager->getIt();
-            vector<Token>::iterator endOfTemp = getTheEndOfBlock(manager);
-            for(vector<Token>::iterator it = startOfTemp; it != endOfTemp; it++){
-                subTokens.insert(subTokens.end(), *it);
+            if(!flagOfRead){
+                vector<Token>::iterator startOfTemp = manager->getIt();
+                vector<Token>::iterator endOfTemp = getTheEndOfBlock(manager);
+                for(vector<Token>::iterator it = startOfTemp; it != endOfTemp; it++){
+                    subTokens.insert(subTokens.end(), *it);
+                }
+                flagOfRead = true;
             }
-            if(analyse(&subTokens) == BREAK_END)
+            endFlag = analyse(&subTokens);
+            if(endFlag == BREAK_END)
                 break;
         }
         else {
@@ -290,14 +295,16 @@ int GrammarAnalyst::handleFor(IteratorManager * manager){
                 }
                 flagOfRead = true;
             }
-            if(analyse(&subTokens) == BREAK_END)
+            endFlag = analyse(&subTokens);
+            if(endFlag == BREAK_END)
                 break;
             Util::getResult((startOfFor + 2)->line);
         }
         manager->jumpTo(startOfFor + 2);
         
     }
-    Util::getResult(startOfFor->line);
+    if(endFlag == NORMAL_END)
+        Util::getResult(startOfFor->line);
     manager->jumpTo(endOfFor);
     cleanNewVariable();
     return NORMAL_END; // 所有作用域之中的BREAK_END信息在这里被拦截下来，之后继续返回NORMAL_END，以控制break只跳出当前循环
@@ -313,6 +320,7 @@ int GrammarAnalyst::handleExpressionInFor(IteratorManager * manager){ // 单独�
 }
 
 int GrammarAnalyst::handleWhile(IteratorManager * manager){
+    int endFlag = NORMAL_END;
     vector<Token> subTokens;
     int stack = 0;
     bool flagOfBorder = false;
@@ -332,12 +340,16 @@ int GrammarAnalyst::handleWhile(IteratorManager * manager){
             manager->jump(1);
         }
         if(!flagOfBorder){
-            vector<Token>::iterator startOfTemp = manager->getIt();
-            vector<Token>::iterator endOfTemp = getTheEndOfBlock(manager);
-            for(vector<Token>::iterator it = startOfTemp; it != endOfTemp; it++){
-                subTokens.insert(subTokens.end(), *it);
+            if(!flagOfRead){
+                vector<Token>::iterator startOfTemp = manager->getIt();
+                vector<Token>::iterator endOfTemp = getTheEndOfBlock(manager);
+                for(vector<Token>::iterator it = startOfTemp; it != endOfTemp; it++){
+                    subTokens.insert(subTokens.end(), *it);
+                }
+                flagOfRead = true;
             }
-            if(analyse(&subTokens) == BREAK_END)
+            endFlag = analyse(&subTokens);
+            if(endFlag == BREAK_END)
                 break;
         }
         else {
@@ -352,14 +364,16 @@ int GrammarAnalyst::handleWhile(IteratorManager * manager){
                 }
                 flagOfRead = true;
             }
-            if(analyse(&subTokens) == BREAK_END)
+            endFlag = analyse(&subTokens);
+            if(endFlag == BREAK_END)
                 break;
             Util::getResult((startOfWhile + 2)->line);
         }
         manager->jumpTo(startOfWhile + 2);
         
     }
-    Util::getResult(startOfWhile->line);
+    if(endFlag == NORMAL_END)
+        Util::getResult(startOfWhile->line);
     manager->jumpTo(endOfWhile);
     return NORMAL_END; // 所有作用域之中的BREAK_END信息在这里被拦截下来，之后继续返回NORMAL_END，以控制break只跳出当前循环
 }
