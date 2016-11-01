@@ -2,12 +2,9 @@
 //  calculator.cpp
 //  SeedCupProject
 //
-//  Created by 唐艺峰 on 16/10/27.
-//  Copyright © 2016年 唐艺峰. All rights reserved.
+//  Created by 唐艺峰，王启萌，朱一帆 on 16/10/27.
+//  Copyright © 2016年 唐艺峰，王启萌，朱一帆. All rights reserved.
 //
-//
-// A demo for calculating all expression.
-// Suppose that I have gotten the token stream and the code of all tokens.
 
 #include "calculator.hpp"
 

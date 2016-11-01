@@ -2,8 +2,8 @@
 //  iteratorManager.cpp
 //  SeedCupProject
 //
-//  Created by 唐艺峰 on 16/10/29.
-//  Copyright © 2016年 唐艺峰. All rights reserved.
+//  Created by 唐艺峰，王启萌，朱一帆 on 16/10/29.
+//  Copyright © 2016年 唐艺峰，王启萌，朱一帆. All rights reserved.
 //
 
 #include "iteratorManager.hpp"

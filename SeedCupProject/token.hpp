@@ -2,8 +2,8 @@
 //  token.hpp
 //  SeedCupProject
 //
-//  Created by 唐艺峰 on 16/10/28.
-//  Copyright © 2016年 唐艺峰. All rights reserved.
+//  Created by 唐艺峰，王启萌，朱一帆 on 16/10/28.
+//  Copyright © 2016年 唐艺峰，王启萌，朱一帆. All rights reserved.
 //
 
 #ifndef token_hpp

@@ -2,19 +2,11 @@
 //  wordAnalyst.cpp
 //  SeedCupProject
 //
-//  Created by 唐艺峰 on 16/10/28.
-//  Copyright © 2016年 唐艺峰. All rights reserved.
+//  Created by 唐艺峰，王启萌，朱一帆 on 16/10/28.
+//  Copyright © 2016年 唐艺峰，王启萌，朱一帆. All rights reserved.
 //
 
 #include "wordAnalyst.hpp"
-
-//string allTypes[6] = {"ReservedWord", "Variable", "DataType", "Symbols", "Border", "End"};
-//                          0              1            2           3         4       5
-//string allReservedWord[8] = {"while", "if", "break", "printf", "int", "do", "else", "for"};
-//string allSymbols[12] = {"+", "-", "*", "/", "++", "--", ">", "<", ">=", "<=", "!=", "=="};
-//string allBorder[10] = {"{", "}", "\"", "\'", "(", ")", ",", "/*", "*/" ,"//"};
-//string allEnd[2] = {";", "\n"};
-//Token(string self, int line, int type);
 
 using namespace std;
 
@@ -141,7 +133,7 @@ int WordAnalyst::seekKey(string word){
         }
     }
     return IDENTIFER;
-
+    
 }
 
 void WordAnalyst::scanner(){
@@ -329,22 +321,38 @@ void WordAnalyst::scanner(){
         //处理常量字符串
         else if (ch == '"')
         {
-            createNewNode("\"", CLE_OPE_DESC, DOU_QUE, -1, line);
+            fseek(infile, -2L, SEEK_CUR);//向后回退，寻找是否为转义字符还是字符串结束的双引号
+            char temp = fgetc(infile);
+            fseek(infile, 1L, SEEK_CUR);
+            if(temp != '\\') {
+                createNewNode("\"", CLE_OPE_DESC, DOU_QUE, -1, line);
+            }
             ch = fgetc(infile);
             i = 0;
-            while (ch != '"')
-            {
-                array[i++] = ch;
-                if (ch == '\n')
-                {
-                    line++;
+            int flag = 0;
+            while(!flag) {
+                while (ch != '"') {
+                    array[i++] = ch;
+                    if (ch == '\n') {
+                        line++;
+                    }
+                    ch = fgetc(infile);
+                    if (ch == EOF) {
+                        return;
+                    }
                 }
+                fseek(infile, -2L, SEEK_CUR);//向后回退，寻找是否为转义字符还是字符串结束的双引号
+                char temp2 = fgetc(infile);
+                fseek(infile, 1L, SEEK_CUR);
                 ch = fgetc(infile);
-                if (ch == EOF)
-                {
-                    return;
+                if(temp2 != '\\') {
+                    flag = 1;
+                    fseek(infile, -1L, SEEK_CUR);
+                } else {
+                    array[i++] = '"';
                 }
             }
+            
             word = new char[i + 1];
             memcpy(word, array, i);
             word[i] = '\0';
@@ -511,7 +519,7 @@ void WordAnalyst::scanner(){
                     fseek(infile, -1L, SEEK_CUR);
                 }
             }
-            //处理*开头的运算符  
+            //处理*开头的运算符
             else if (ch == '*')
             {
                 ch = fgetc(infile);
@@ -525,7 +533,7 @@ void WordAnalyst::scanner(){
                     fseek(infile, -1L, SEEK_CUR);
                 }
             }
-            //处理按^开头的运算符  
+            //处理按^开头的运算符
             else if (ch == '^')
             {
                 ch = fgetc(infile);
@@ -539,7 +547,7 @@ void WordAnalyst::scanner(){
                     fseek(infile, -1L, SEEK_CUR);
                 }
             }
-            //处理%开头的运算符  
+            //处理%开头的运算符
             else if (ch == '%')
             {
                 ch = fgetc(infile);
@@ -553,7 +561,7 @@ void WordAnalyst::scanner(){
                     fseek(infile, -1L, SEEK_CUR);
                 }
             }
-            //处理&开头的运算符  
+            //处理&开头的运算符
             else if (ch == '&')
             {
                 ch = fgetc(infile);
@@ -571,7 +579,7 @@ void WordAnalyst::scanner(){
                     fseek(infile, -1L, SEEK_CUR);
                 }
             }
-            //处理~开头的运算符  
+            //处理~开头的运算符
             else if (ch == '~')
             {
                 ch = fgetc(infile);
@@ -585,7 +593,7 @@ void WordAnalyst::scanner(){
                     fseek(infile, -1L, SEEK_CUR);
                 }
             }
-            //处理!开头的运算符  
+            //处理!开头的运算符
             else if (ch == '!')
             {
                 ch = fgetc(infile);
@@ -599,7 +607,7 @@ void WordAnalyst::scanner(){
                     fseek(infile, -1L, SEEK_CUR);
                 }
             }
-            //处理<开头的运算符  
+            //处理<开头的运算符
             else if (ch == '<')
             {
                 ch = fgetc(infile);
@@ -617,7 +625,7 @@ void WordAnalyst::scanner(){
                     fseek(infile, -1L, SEEK_CUR);
                 }
             }
-            //处理>开头的运算符  
+            //处理>开头的运算符
             else if (ch == '>')
             {
                 ch = fgetc(infile);
@@ -635,7 +643,7 @@ void WordAnalyst::scanner(){
                     fseek(infile, -1L, SEEK_CUR);
                 }
             }
-            //处理|开头的运算符  
+            //处理|开头的运算符
             else if (ch == '|')
             {
                 ch = fgetc(infile);

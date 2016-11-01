@@ -2,8 +2,8 @@
 //  grammarAnalyst.cpp
 //  SeedCupProject
 //
-//  Created by 唐艺峰 on 16/10/29.
-//  Copyright © 2016年 唐艺峰. All rights reserved.
+//  Created by 唐艺峰，王启萌，朱一帆 on 16/10/29.
+//  Copyright © 2016年 唐艺峰，王启萌，朱一帆. All rights reserved.
 //
 
 #include "grammarAnalyst.hpp"
@@ -141,7 +141,6 @@ int GrammarAnalyst::handleIf(IteratorManager * manager){
     manager->jump(1);
     if(manager->getIt()->content == "{"){ //判断if之后是否有{
         flagOfIfBorder = true;
-        manager->jump(1);
     }
     if(!flagOfIfBorder){
         if(expression){
@@ -174,15 +173,7 @@ int GrammarAnalyst::handleIf(IteratorManager * manager){
         }
     }else{
         if(!expression){ //如果if后面有{，并且表达式为false
-            while(!(manager->getIt()->content == "}" && stack == 0)){ //跳过if后面的{}块
-                if(manager->getIt()->content == "{")
-                    stack++;
-                else if(manager->getIt()->content == "}")
-                    stack--;
-                manager->jump(1);
-            }
-            stack = 0;
-            manager->jump(1);
+            manager->jumpTo(getTheEndOfBracket(manager));
             
             if((manager->getIt() != manager->getEnd()) && manager->getIt()->content.compare("else") == 0){ //如果有else的话
                 manager->jump(1);
@@ -359,15 +350,7 @@ int GrammarAnalyst::handleDo(IteratorManager * manager){
     
     manager->jump(1);
     if(manager->getIt()->content.compare("{") == 0){
-        while(!(manager->getIt()->content == "}" && stack == 1)){
-            if(manager->getIt()->content == "{")
-                stack++;
-            else if(manager->getIt()->content == "}")
-                stack--;
-            manager->jump(1);
-        }
-        stack = 0;
-        manager->jump(1);
+        manager->jumpTo(getTheEndOfBracket(manager));
     }
     else{
         manager->jumpTo(getTheEndOfBlock(manager));
@@ -406,20 +389,11 @@ int GrammarAnalyst::handleDo(IteratorManager * manager){
 }
 
 vector<Token>::iterator GrammarAnalyst::getTheEndOfWhileOrFor(IteratorManager * manager){
-    int stack = 0;
     while(manager->getIt()->content.compare(")") != 0)
         manager->jump(1);
     manager->jump(1);
     if(manager->getIt()->content.compare("{") == 0){
-        while(!(manager->getIt()->content == "}" && stack == 1)){
-            if(manager->getIt()->content == "{")
-                stack++;
-            else if(manager->getIt()->content == "}")
-                stack--;
-            manager->jump(1);
-        }
-        manager->jump(1);
-        
+        manager->jumpTo(getTheEndOfBracket(manager));
     }
     else{
         manager->jumpTo(getTheEndOfBlock(manager));
@@ -428,20 +402,11 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfWhileOrFor(IteratorManager * 
 }
 
 vector<Token>::iterator GrammarAnalyst::getTheEndOfIf(IteratorManager * manager){
-    int stack = 0;
     while(manager->getIt()->content.compare(")") != 0)
         manager->jump(1);
     manager->jump(1);
     if(manager->getIt()->content.compare("{") == 0){
-        while(!(manager->getIt()->content == "}" && stack == 1)){
-            if(manager->getIt()->content == "{")
-                stack++;
-            else if(manager->getIt()->content == "}")
-                stack--;
-            manager->jump(1);
-        }
-        stack = 0;
-        manager->jump(1);
+        manager->jumpTo(getTheEndOfBracket(manager));
     }
     else{
         manager->jumpTo(getTheEndOfBlock(manager));
@@ -454,15 +419,7 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfIf(IteratorManager * manager)
             manager->jump(1);
         }
         if(manager->getIt()->content.compare("{") == 0){
-            while(!(manager->getIt()->content == "}" && stack == 1)){
-                if(manager->getIt()->content == "{")
-                    stack++;
-                else if(manager->getIt()->content == "}")
-                    stack--;
-                manager->jump(1);
-            }
-            stack = 0;
-            manager->jump(1);
+             manager->jumpTo(getTheEndOfBracket(manager));
         }
         else{
             manager->jumpTo(getTheEndOfBlock(manager));
@@ -472,18 +429,9 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfIf(IteratorManager * manager)
 }
 
 vector<Token>::iterator GrammarAnalyst::getTheEndOfDo(IteratorManager * manager){
-    int stack = 0;
     manager->jump(1);
     if(manager->getIt()->content.compare("{") == 0){
-        while(!(manager->getIt()->content == "}" && stack == 1)){
-            if(manager->getIt()->content == "{")
-                stack++;
-            else if(manager->getIt()->content == "}")
-                stack--;
-            manager->jump(1);
-        }
-        stack = 0;
-        manager->jump(1);
+        manager->jumpTo(getTheEndOfBracket(manager));
     }
     else{
         manager->jumpTo(getTheEndOfBlock(manager));
@@ -495,8 +443,16 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfDo(IteratorManager * manager)
 }
 
 vector<Token>::iterator GrammarAnalyst::getTheEndOfBracket(IteratorManager * manager){
-    
-    
+    int stack = 0;
+    while(!(manager->getIt()->content == "}" && stack == 1)){
+        if(manager->getIt()->content == "{")
+            stack++;
+        else if(manager->getIt()->content == "}")
+            stack--;
+        manager->jump(1);
+    }
+    manager->jump(1);
+    return manager->getIt();
 }
 
 vector<Token>::iterator GrammarAnalyst::getTheEndOfBlock(IteratorManager * manager){
@@ -516,14 +472,9 @@ vector<Token>::iterator GrammarAnalyst::getTheEndOfBlock(IteratorManager * manag
     }
 }
 
-
-//
-// Handle printf
-//
-
 int GrammarAnalyst::handlePrintf(IteratorManager * manager){
     manager->move(5);
-    while(manager->getIt()->content == ","){
+    while(manager->getIt()->content == ","){ // 如果是,说明后面出现表达式
         manager->move(1);
         handleExpression(manager);
     }
@@ -531,11 +482,7 @@ int GrammarAnalyst::handlePrintf(IteratorManager * manager){
     return NORMAL_END;
 }
 
-//
-// Handle expression
-//
-
-int GrammarAnalyst::handleExpression(IteratorManager * manager){
+int GrammarAnalyst::handleExpression(IteratorManager * manager){ //将表达式截取下来，调用Calculator计算表达式的方法即可
     vector<Token> expression;
     int value;
     while(manager->getIt()->describe != "boundary"){
@@ -552,7 +499,7 @@ int GrammarAnalyst::handleExpression(IteratorManager * manager){
     }
 }
 
-void GrammarAnalyst::cleanNewVariable(){
+void GrammarAnalyst::cleanNewVariable(){ //清除作用域内的变量
     for(int i = 0 ; i < newVariable.top().size(); i++){
         memoryStack.popVariable(newVariable.top()[i]);
     }
