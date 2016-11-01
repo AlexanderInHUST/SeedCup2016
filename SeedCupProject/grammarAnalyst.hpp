@@ -21,8 +21,8 @@
 #include <vector>
 #include <strstream>
 
-#define NORMAL_END 1
-#define BREAK_END -1
+#define NORMAL_END 976390503
+#define BREAK_END -476632982
 
 using namespace std;
 
